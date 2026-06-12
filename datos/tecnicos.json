@@ -1,0 +1,20 @@
+[
+  {
+    "id_tecnico": 1,
+    "nombre": "Carlos",
+    "especialidad": "electrica",
+    "estado": "disponible"
+  },
+  {
+    "id_tecnico": 2,
+    "nombre": "El Negro",
+    "especialidad": "aires",
+    "estado": "disponible"
+  },
+  {
+    "id_tecnico": 3,
+    "nombre": "Santi",
+    "especialidad": "multiuso",
+    "estado": "disponible"
+  }
+]

@@ -1,0 +1,29 @@
+[
+  {
+    "id_cobro": 1,
+    "id_pedido": 2,
+    "monto": 5000.0,
+    "forma_pago": "cuotas",
+    "recibido_por": "Oli",
+    "estado": "pagado",
+    "fecha": "06/06/2026"
+  },
+  {
+    "id_cobro": 2,
+    "id_pedido": 2,
+    "monto": 5000.0,
+    "forma_pago": "cuotas",
+    "recibido_por": "Oli",
+    "estado": "pagado",
+    "fecha": "08/06/2026"
+  },
+  {
+    "id_cobro": 3,
+    "id_pedido": 2,
+    "monto": 5000.0,
+    "forma_pago": "cuotas",
+    "recibido_por": "Oli",
+    "estado": "pendiente",
+    "fecha": "10/06/2026"
+  }
+]

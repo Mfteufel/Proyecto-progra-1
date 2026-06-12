@@ -1,0 +1,26 @@
+[
+  {
+    "id_repuesto": 1,
+    "id_pedido": 1,
+    "id_tecnico": null,
+    "descripcion": "Térmica 25A para tablero de cocina",
+    "estado": "solicitado",
+    "precio": null
+  },
+  {
+    "id_repuesto": 2,
+    "id_pedido": 2,
+    "id_tecnico": 2,
+    "descripcion": "Placa electrónica inverter Carrier 3000 frigorías",
+    "estado": "entregado",
+    "precio": 8500.0
+  },
+  {
+    "id_repuesto": 3,
+    "id_pedido": 2,
+    "id_tecnico": null,
+    "descripcion": "Gas refrigerante R410A",
+    "estado": "comprado",
+    "precio": 3200.0
+  }
+]
