@@ -26,7 +26,7 @@
     "descripcion": "Tablero recalentado, piden revisión preventiva",
     "urgente": false,
     "fecha": "10/06/2026",
-    "estado": "pendiente",
+    "estado": "asignado",
     "precio": null
   }
 ]

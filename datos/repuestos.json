@@ -22,5 +22,13 @@
     "descripcion": "Gas refrigerante R410A",
     "estado": "comprado",
     "precio": 3200.0
+  },
+  {
+    "id_repuesto": 4,
+    "id_pedido": 1,
+    "id_tecnico": 1,
+    "descripcion": "1 rollos de Rollo de cable",
+    "estado": "solicitado",
+    "precio": null
   }
 ]

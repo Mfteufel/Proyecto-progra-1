@@ -1,0 +1,65 @@
+[
+  {
+    "id_insumo": 1,
+    "nombre": "Rollo de cable",
+    "unidad": "rollos",
+    "cantidad": 7,
+    "cantidad_minima": 2
+  },
+  {
+    "id_insumo": 2,
+    "nombre": "Térmica 25A",
+    "unidad": "unidades",
+    "cantidad": 4,
+    "cantidad_minima": 2
+  },
+  {
+    "id_insumo": 3,
+    "nombre": "Caño de cobre",
+    "unidad": "rollos",
+    "cantidad": 3,
+    "cantidad_minima": 1
+  },
+  {
+    "id_insumo": 4,
+    "nombre": "Garrafa gas refrigerante",
+    "unidad": "garrafas",
+    "cantidad": 2,
+    "cantidad_minima": 1
+  },
+  {
+    "id_insumo": 5,
+    "nombre": "Caja de tornillos",
+    "unidad": "cajas",
+    "cantidad": 3,
+    "cantidad_minima": 1
+  },
+  {
+    "id_insumo": 6,
+    "nombre": "Tarugos",
+    "unidad": "bolsas",
+    "cantidad": 2,
+    "cantidad_minima": 1
+  },
+  {
+    "id_insumo": 7,
+    "nombre": "Conectores eléctricos",
+    "unidad": "bolsas",
+    "cantidad": 4,
+    "cantidad_minima": 2
+  },
+  {
+    "id_insumo": 8,
+    "nombre": "Cinta aisladora",
+    "unidad": "unidades",
+    "cantidad": 6,
+    "cantidad_minima": 3
+  },
+  {
+    "id_insumo": 9,
+    "nombre": "Caño plástico blanco",
+    "unidad": "unidades",
+    "cantidad": 8,
+    "cantidad_minima": 3
+  }
+]

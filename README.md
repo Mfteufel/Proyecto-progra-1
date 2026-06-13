@@ -8,10 +8,11 @@ Sistema de gestión por consola para una empresa de servicios técnicos (aires a
 
 Permite a Oli (el dueño) gestionar:
 - **Clientes** — altas, bajas, modificaciones y búsqueda
-- **Técnicos** — Carlos, El Negro y Santi (próximamente)
-- **Pedidos** — órdenes de trabajo con estados y asignación de técnicos (próximamente)
-- **Cobros** — registro de pagos, cuotas y deudores (próximamente)
-- **Repuestos** — piezas pedidas para cada trabajo (próximamente)
+- **Técnicos** — Carlos, El Negro y Santi; gestión de estados y especialidades
+- **Pedidos** — órdenes de trabajo con máquina de estados y asignación de técnicos
+- **Cobros** — registro de pagos, cuotas, deudores y avance automático a "cobrado"
+- **Repuestos** — piezas pedidas para cada trabajo (especiales o del estante)
+- **Stock del estante** — insumos comunes con alerta de reposición; al usar un insumo se descuenta del estante y se suma al pedido automáticamente
 - **Historial** — consulta de todo lo relacionado a un cliente (próximamente)
 
 ---
@@ -20,15 +21,21 @@ Permite a Oli (el dueño) gestionar:
 
 ```
 sistema_oli/
-├── main.py           ← punto de entrada, acá se corre el sistema
-├── utils.py          ← funciones y constantes compartidas por todos los módulos
-├── clientes.py       ← módulo de clientes (único módulo completo hasta ahora)
-├── datos/            ← archivos JSON con los datos del sistema
+├── main.py           ← punto de entrada; solo llama a los menús de cada módulo
+├── utils.py          ← funciones genéricas, constantes y helpers de input compartidos
+├── clientes.py       ← datos + menú de clientes
+├── tecnicos.py       ← datos + menú de técnicos
+├── pedidos.py        ← datos + menú de pedidos
+├── cobros.py         ← datos + menú de cobros
+├── repuestos.py      ← datos + menú de repuestos por pedido
+├── stock.py          ← datos + menú del estante de insumos
+├── datos/
 │   ├── clientes.json
 │   ├── tecnicos.json
 │   ├── pedidos.json
 │   ├── cobros.json
-│   └── repuestos.json
+│   ├── repuestos.json
+│   └── stock.json
 ├── tests/
 │   └── test_utils.py ← tests de las funciones base
 └── README.md         ← este archivo
@@ -50,15 +57,14 @@ Aparece el menú principal:
 === SISTEMA OLI ===
 
 1. Clientes
-2. Técnicos        (próximamente)
-3. Pedidos         (próximamente)
-4. Cobros          (próximamente)
+2. Técnicos
+3. Pedidos
+4. Cobros
 5. Historial       (próximamente)
-6. Repuestos       (próximamente)
+6. Repuestos
+7. Stock del estante
 0. Salir
 ```
-
-Por ahora solo el menú de **Clientes** está activo. Las demás opciones muestran "próximamente".
 
 ---
 
@@ -70,64 +76,130 @@ Desde la carpeta `sistema_oli/`:
 python3 tests/test_utils.py
 ```
 
-Tiene que mostrar algo así:
-
-```
-=== TESTS DE utils.py ===
-
-✓ generar_id: lista vacía devuelve 1
-✓ generar_id: devuelve max + 1 (no largo + 1)
-...
-9 aprobados, 0 fallados de 9 tests
-```
-
 ---
 
 ## Estado actual del proyecto
 
 | Archivo | Estado | Qué hace |
 |---|---|---|
-| `utils.py` | ✅ Completo | Funciones genéricas: cargar/guardar JSON, generar IDs, buscar por ID. Constantes compartidas. |
-| `tests/test_utils.py` | ✅ Completo | 9 tests sobre `generar_id`, `buscar_por_id`, `cargar_datos` y `guardar_datos`. |
-| `clientes.py` | ✅ Completo | Alta, baja, modificación y búsqueda de clientes con validaciones de integridad. |
-| `main.py` | 🔄 En progreso | Menú principal funcionando. Solo clientes conectado, el resto "próximamente". |
-| `tecnicos.py` | ❌ Pendiente | Gestión de técnicos. |
-| `pedidos.py` | ❌ Pendiente | Gestión de pedidos y estados. |
-| `cobros.py` | ❌ Pendiente | Registro de cobros y deudas. |
-| `historial.py` | ❌ Pendiente | Consulta del historial por cliente. |
-| `repuestos.py` | ❌ Pendiente | Gestión de repuestos por pedido. |
+| `utils.py` | ✅ Completo | Funciones genéricas: cargar/guardar JSON, generar IDs, buscar por ID. Helpers de input compartidos. Constantes. |
+| `tests/test_utils.py` | ✅ Completo | 9 tests sobre las funciones base. |
+| `clientes.py` | ✅ Completo | Alta, baja, modificación y búsqueda. Baja bloqueada si tiene pedidos. |
+| `tecnicos.py` | ✅ Completo | Alta, baja, listado por especialidad/disponibilidad, cambio de estado. Baja bloqueada si tiene pedidos activos. |
+| `pedidos.py` | ✅ Completo | Alta, baja, filtros, asignación de técnico, avance de estado lineal. |
+| `cobros.py` | ✅ Completo | Registro de cobros/cuotas, deuda, deudores. Al pagar todo avanza el pedido a "cobrado". Pide precio del trabajo si falta. |
+| `repuestos.py` | ✅ Completo | Repuestos por pedido. Carga manual para piezas especiales; las del estante entran vía `stock.usar_insumo()`. Avance de estado lineal. |
+| `stock.py` | ✅ Completo | Estante de insumos comunes. `usar_insumo()` descuenta del estante y registra el repuesto en el pedido en un solo paso. Alerta automática cuando un insumo llega al mínimo. |
+| `main.py` | ✅ Completo | Menú principal. Solo importa y llama a los menús de cada módulo. |
+| `historial.py` | ❌ Pendiente | Consulta del historial por cliente: todos sus pedidos, cobros y repuestos. Incluye búsqueda de garantías. |
 | `tests/test_clientes.py` | ❌ Pendiente | Tests de integridad de clientes. |
 | `tests/test_pedidos.py` | ❌ Pendiente | Tests de integridad de pedidos. |
 
 ---
 
-## Cómo están guardados los datos
+## Arquitectura y convenciones
 
-Cada entidad se guarda en un archivo `.json` dentro de la carpeta `datos/`. Cada archivo es una lista de diccionarios. Ejemplo de `clientes.json`:
+### Patrón de cada módulo
 
-```json
-[
-  {
-    "id_cliente": 1,
-    "nombre": "Doña Rosa",
-    "direccion": "Av. Siempreviva 742",
-    "telefono": "11-1234-5678",
-    "tipo": "particular"
-  }
-]
+Cada módulo tiene dos secciones bien separadas:
+
+1. **Funciones de datos** — trabajan con los JSON. Sin `input()` ni `print()` de UI. Usables desde tests o desde otros módulos.
+2. **Menú** — `menu_X()` y funciones privadas `_nombre()` que manejan toda la interacción por consola.
+
+`main.py` solo importa los `menu_X()` y arma el menú principal.
+
+### Helpers de input (en utils.py)
+
+```python
+pedir_texto(mensaje)         # string no vacío
+pedir_entero(mensaje)        # entero, repite si hay error
+pedir_opcion(mensaje, lista) # opciones numeradas, devuelve el valor elegido
+pedir_confirmacion(mensaje)  # s/n → True/False
 ```
-
-Los datos de prueba ya están cargados en los archivos JSON con clientes, técnicos, pedidos, cobros y repuestos de ejemplo.
 
 ---
 
-## Reglas importantes del proyecto
+## Cómo están guardados los datos
 
-- **Sin clases** en los módulos del sistema (restricción del profesor). Solo funciones.
-- **Sin librerías externas** — solo biblioteca estándar de Python (`json`, `os`).
-- **Los IDs son autoincrementales** — el sistema los genera solo, nunca se ingresan a mano.
-- **Los datos persisten** en archivos `.json` — si cerrás y abrís el sistema, los datos siguen ahí.
-- **Mensajes en español argentino** — el sistema habla como habla Oli.
+Cada entidad se guarda en un archivo `.json` dentro de `datos/`. Campos sin valor usan `null`.
+
+**stock.json** — insumos del estante
+```json
+[
+  {"id_insumo": 1, "nombre": "Rollo de cable", "unidad": "rollos", "cantidad": 5, "cantidad_minima": 2}
+]
+```
+
+**repuestos.json** — piezas usadas en cada trabajo
+```json
+[
+  {"id_repuesto": 1, "id_pedido": 1, "id_tecnico": null, "descripcion": "Térmica 25A", "estado": "solicitado", "precio": null}
+]
+```
+
+**cobros.json**
+```json
+[
+  {"id_cobro": 1, "id_pedido": 2, "monto": 5000.0, "forma_pago": "cuotas", "recibido_por": "Oli", "estado": "pagado", "fecha": "06/06/2026"}
+]
+```
+
+---
+
+## Máquinas de estado
+
+**Pedidos** (avance lineal, no se puede retroceder ni saltar):
+```
+pendiente → asignado → en_curso → terminado → cobrado
+```
+
+**Repuestos** (avance lineal; al pasar a "entregado" requiere indicar el técnico):
+```
+solicitado → comprado → entregado → instalado
+```
+
+---
+
+## Reglas de integridad referencial
+
+| Operación | Validación |
+|---|---|
+| Crear pedido | `id_cliente` debe existir |
+| Asignar técnico | `id_tecnico` debe existir |
+| Eliminar cliente | No puede tener pedidos asociados |
+| Eliminar técnico | No puede tener pedidos en estado distinto de "cobrado" |
+| Eliminar pedido | No puede tener cobros ni repuestos |
+| Registrar cobro | Pedido debe estar en "terminado" o "cobrado" |
+| Usar insumo del estante | Pedido debe existir; stock debe ser suficiente |
+| Avanzar repuesto a "entregado" | Requiere indicar el técnico que lo recibe |
+
+---
+
+## Stock del estante — cómo funciona
+
+Oli tiene insumos comunes ("infaltables") guardados en el taller: cables, térmicas, caño de cobre, gas refrigerante, tornillos, tarugos, conectores, cinta aisladora y caños plásticos.
+
+Cuando un técnico agarra algo del estante para un trabajo:
+1. Se elige el insumo y la cantidad desde el menú **Stock → Usar insumo en un pedido**
+2. El sistema descuenta la cantidad del estante
+3. El sistema crea automáticamente un repuesto en el pedido para que Oli no se olvide de cobrárselo al cliente
+4. Si la cantidad restante queda en el mínimo o por debajo, el sistema avisa: *"¡Hay que reponer!"*
+
+Cuando Oli vuelve del mayorista usa **Stock → Reponer stock** para sumar la cantidad comprada.
+
+### Insumos precargados
+
+| ID | Insumo | Unidad | Mínimo |
+|---|---|---|---|
+| 1 | Rollo de cable | rollos | 2 |
+| 2 | Térmica 25A | unidades | 2 |
+| 3 | Caño de cobre | rollos | 1 |
+| 4 | Garrafa gas refrigerante | garrafas | 1 |
+| 5 | Caja de tornillos | cajas | 1 |
+| 6 | Tarugos | bolsas | 1 |
+| 7 | Conectores eléctricos | bolsas | 2 |
+| 8 | Cinta aisladora | unidades | 3 |
+| 9 | Caño plástico blanco | unidades | 3 |
 
 ---
 
@@ -135,9 +207,19 @@ Los datos de prueba ya están cargados en los archivos JSON con clientes, técni
 
 | ID | Nombre | Especialidad |
 |---|---|---|
-| 1 | Carlos | Eléctrica (el más experimentado) |
+| 1 | Carlos | Eléctrica |
 | 2 | El Negro | Aires acondicionados |
 | 3 | Santi | Multiuso / todo terreno |
+
+---
+
+## Reglas del proyecto (restricciones del profesor)
+
+- Sin clases — solo funciones
+- Sin librerías externas — solo biblioteca estándar de Python (`json`, `os`, `datetime`)
+- IDs autoincrementales generados por el sistema
+- Datos persistidos en archivos `.json`
+
 
 ---
 

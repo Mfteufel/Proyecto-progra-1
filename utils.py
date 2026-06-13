@@ -18,6 +18,7 @@ ARCHIVO_TECNICOS  = os.path.join(_BASE, "datos", "tecnicos.json")
 ARCHIVO_PEDIDOS   = os.path.join(_BASE, "datos", "pedidos.json")
 ARCHIVO_COBROS    = os.path.join(_BASE, "datos", "cobros.json")
 ARCHIVO_REPUESTOS = os.path.join(_BASE, "datos", "repuestos.json")
+ARCHIVO_STOCK     = os.path.join(_BASE, "datos", "stock.json")
 
 # ── Valores válidos por campo ──────────────────────────────────────────────────
 
@@ -84,3 +85,51 @@ def buscar_por_id(lista, nombre_id, valor):
         if registro[nombre_id] == valor:
             return registro
     return None
+
+
+# ── Helpers de input por consola ──────────────────────────────────────────────
+
+def pedir_texto(mensaje):
+    """Pide un string no vacío, repite hasta que el usuario ingrese algo."""
+    while True:
+        valor = input(mensaje).strip()
+        if valor:
+            return valor
+        print("  Este campo no puede estar vacío. Intentá de nuevo.")
+
+
+def pedir_entero(mensaje):
+    """Pide un número entero, repite si el usuario ingresa algo inválido."""
+    while True:
+        try:
+            return int(input(mensaje).strip())
+        except ValueError:
+            print("  Tenés que ingresar un número entero.")
+
+
+def pedir_opcion(mensaje, opciones):
+    """
+    Muestra opciones numeradas y devuelve el valor elegido.
+
+    Recibe: mensaje (str), opciones (list).
+    Devuelve: el valor de la lista correspondiente a la elección.
+    """
+    for i, op in enumerate(opciones, 1):
+        print(f"  {i}. {op}")
+    while True:
+        try:
+            eleccion = int(input(mensaje).strip())
+            if 1 <= eleccion <= len(opciones):
+                return opciones[eleccion - 1]
+            print(f"  Elegí un número entre 1 y {len(opciones)}.")
+        except ValueError:
+            print("  Tenés que ingresar un número.")
+
+
+def pedir_confirmacion(mensaje):
+    """Pide s/n y devuelve True si el usuario confirma."""
+    while True:
+        respuesta = input(mensaje + " (s/n): ").strip().lower()
+        if respuesta in ("s", "n"):
+            return respuesta == "s"
+        print("  Ingresá 's' para sí o 'n' para no.")

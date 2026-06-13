@@ -1,15 +1,19 @@
 """
-clientes.py — Alta, baja, modificación y consulta de clientes del sistema Oli.
+clientes.py — Alta, baja, modificación, consulta y menú de clientes del sistema Oli.
 
-Funciones: crear_cliente, listar_clientes, buscar_cliente_por_id,
-           modificar_cliente, eliminar_cliente.
+Funciones de datos: crear_cliente, listar_clientes, buscar_cliente_por_id,
+                    modificar_cliente, eliminar_cliente.
+Menú:              menu_clientes.
 """
 
 from utils import (
     cargar_datos, guardar_datos, generar_id, buscar_por_id,
+    pedir_texto, pedir_entero, pedir_opcion, pedir_confirmacion,
     ARCHIVO_CLIENTES, ARCHIVO_PEDIDOS, TIPOS_CLIENTE
 )
 
+
+# ── Funciones de datos ────────────────────────────────────────────────────────
 
 def crear_cliente(datos):
     """
@@ -94,11 +98,132 @@ def eliminar_cliente(id_cliente):
         return False
 
     pedidos = cargar_datos(ARCHIVO_PEDIDOS)
-    tiene_pedidos = any(p["id_cliente"] == id_cliente for p in pedidos)
-    if tiene_pedidos:
+    if any(p["id_cliente"] == id_cliente for p in pedidos):
         print(f"No se puede eliminar a {cliente['nombre']} porque tiene pedidos asociados.")
         return False
 
     clientes = [c for c in clientes if c["id_cliente"] != id_cliente]
     guardar_datos(ARCHIVO_CLIENTES, clientes)
     return True
+
+
+# ── Menú de clientes ──────────────────────────────────────────────────────────
+
+def menu_clientes():
+    while True:
+        print("\n=== CLIENTES ===")
+        print("1. Cargar cliente nuevo")
+        print("2. Listar todos los clientes")
+        print("3. Buscar cliente por ID")
+        print("4. Modificar cliente")
+        print("5. Eliminar cliente")
+        print("0. Volver al menú principal")
+
+        opcion = input("\nElegí una opción: ").strip()
+
+        if opcion == "1":
+            _cargar_cliente()
+        elif opcion == "2":
+            _listar_clientes()
+        elif opcion == "3":
+            _buscar_cliente()
+        elif opcion == "4":
+            _modificar_cliente()
+        elif opcion == "5":
+            _eliminar_cliente()
+        elif opcion == "0":
+            break
+        else:
+            print("Opción inválida, elegí una de las que aparecen en el menú.")
+
+
+def _cargar_cliente():
+    print("\n--- Cargar cliente nuevo ---")
+    nombre = pedir_texto("Nombre del cliente: ")
+    direccion = pedir_texto("Dirección: ")
+    telefono = pedir_texto("Teléfono: ")
+    print("Tipo de cliente:")
+    tipo = pedir_opcion("Elegí el tipo: ", TIPOS_CLIENTE)
+
+    cliente = crear_cliente({
+        "nombre": nombre,
+        "direccion": direccion,
+        "telefono": telefono,
+        "tipo": tipo
+    })
+    if cliente:
+        print(f"\nCliente '{cliente['nombre']}' cargado con ID {cliente['id_cliente']}.")
+
+
+def _listar_clientes():
+    print("\n--- Clientes registrados ---")
+    clientes = listar_clientes()
+    if not clientes:
+        print("No hay clientes cargados todavía.")
+        return
+    for c in clientes:
+        print(f"  [{c['id_cliente']}] {c['nombre']} — {c['direccion']} — Tel: {c['telefono']} — {c['tipo']}")
+
+
+def _buscar_cliente():
+    print("\n--- Buscar cliente ---")
+    id_cliente = pedir_entero("ID del cliente: ")
+    cliente = buscar_cliente_por_id(id_cliente)
+    if cliente is None:
+        print(f"No existe un cliente con ID {id_cliente}.")
+    else:
+        print(f"\n  ID:        {cliente['id_cliente']}")
+        print(f"  Nombre:    {cliente['nombre']}")
+        print(f"  Dirección: {cliente['direccion']}")
+        print(f"  Teléfono:  {cliente['telefono']}")
+        print(f"  Tipo:      {cliente['tipo']}")
+
+
+def _modificar_cliente():
+    print("\n--- Modificar cliente ---")
+    id_cliente = pedir_entero("ID del cliente a modificar: ")
+    cliente = buscar_cliente_por_id(id_cliente)
+    if cliente is None:
+        print(f"No existe un cliente con ID {id_cliente}.")
+        return
+
+    print(f"Modificando a '{cliente['nombre']}'. Dejá vacío para no cambiar el campo.")
+
+    nuevos = {}
+    nombre = input(f"Nombre [{cliente['nombre']}]: ").strip()
+    if nombre:
+        nuevos["nombre"] = nombre
+
+    direccion = input(f"Dirección [{cliente['direccion']}]: ").strip()
+    if direccion:
+        nuevos["direccion"] = direccion
+
+    telefono = input(f"Teléfono [{cliente['telefono']}]: ").strip()
+    if telefono:
+        nuevos["telefono"] = telefono
+
+    if pedir_confirmacion(f"¿Querés cambiar el tipo? (actual: {cliente['tipo']})"):
+        print("Tipo de cliente:")
+        nuevos["tipo"] = pedir_opcion("Elegí el tipo: ", TIPOS_CLIENTE)
+
+    if not nuevos:
+        print("No cambiaste nada.")
+        return
+
+    modificar_cliente(id_cliente, nuevos)
+    print("Cliente actualizado.")
+
+
+def _eliminar_cliente():
+    print("\n--- Eliminar cliente ---")
+    id_cliente = pedir_entero("ID del cliente a eliminar: ")
+    cliente = buscar_cliente_por_id(id_cliente)
+    if cliente is None:
+        print(f"No existe un cliente con ID {id_cliente}.")
+        return
+
+    if not pedir_confirmacion(f"¿Confirmás eliminar a '{cliente['nombre']}'?"):
+        print("Cancelado.")
+        return
+
+    eliminar_cliente(id_cliente)
