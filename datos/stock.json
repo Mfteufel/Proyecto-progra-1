@@ -59,7 +59,70 @@
     "id_insumo": 9,
     "nombre": "Caño plástico blanco",
     "unidad": "unidades",
-    "cantidad": 8,
+    "cantidad": 5,
     "cantidad_minima": 3
+  },
+  {
+    "id_insumo": 10,
+    "nombre": "Disyuntor diferencial 25A",
+    "unidad": "unidades",
+    "cantidad": 1,
+    "cantidad_minima": 2
+  },
+  {
+    "id_insumo": 11,
+    "nombre": "Teflon",
+    "unidad": "rollos",
+    "cantidad": 2,
+    "cantidad_minima": 2
+  },
+  {
+    "id_insumo": 12,
+    "nombre": "Bridas plásticas",
+    "unidad": "bolsas",
+    "cantidad": 5,
+    "cantidad_minima": 2
+  },
+  {
+    "id_insumo": 13,
+    "nombre": "Llave térmica 16A",
+    "unidad": "unidades",
+    "cantidad": 0,
+    "cantidad_minima": 1
+  },
+  {
+    "id_insumo": 14,
+    "nombre": "Cinta de aluminio",
+    "unidad": "rollos",
+    "cantidad": 3,
+    "cantidad_minima": 1
+  },
+  {
+    "id_insumo": 15,
+    "nombre": "Silicona neutra",
+    "unidad": "tubos",
+    "cantidad": 4,
+    "cantidad_minima": 2
+  },
+  {
+    "id_insumo": 16,
+    "nombre": "Toma schuko empotrable",
+    "unidad": "unidades",
+    "cantidad": 6,
+    "cantidad_minima": 3
+  },
+  {
+    "id_insumo": 17,
+    "nombre": "Cable flexible 1.5mm²",
+    "unidad": "rollos",
+    "cantidad": 1,
+    "cantidad_minima": 3
+  },
+  {
+    "id_insumo": 18,
+    "nombre": "Caja de luz rectangular",
+    "unidad": "unidades",
+    "cantidad": 10,
+    "cantidad_minima": 4
   }
 ]

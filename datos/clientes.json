@@ -19,5 +19,68 @@
     "direccion": "Calle 33",
     "telefono": "12345678",
     "tipo": "particular"
+  },
+  {
+    "id_cliente": 4,
+    "nombre": "Restaurante El Gaucho",
+    "direccion": "Av. Corrientes 1500",
+    "telefono": "11-4455-6677",
+    "tipo": "comercio"
+  },
+  {
+    "id_cliente": 5,
+    "nombre": "Laura Martínez",
+    "direccion": "Calle 9 de Julio 78",
+    "telefono": "11-2233-4455",
+    "tipo": "particular"
+  },
+  {
+    "id_cliente": 6,
+    "nombre": "Mueblería Don Pedro",
+    "direccion": "Av. San Martín 234",
+    "telefono": "11-7788-9900",
+    "tipo": "comercio"
+  },
+  {
+    "id_cliente": 7,
+    "nombre": "Supermercado Norte",
+    "direccion": "Ruta 3 km 12",
+    "telefono": "11-5566-7788",
+    "tipo": "comercio"
+  },
+  {
+    "id_cliente": 8,
+    "nombre": "Jorge Ramírez",
+    "direccion": "Pasaje Mitre 45",
+    "telefono": "11-3344-5566",
+    "tipo": "particular"
+  },
+  {
+    "id_cliente": 9,
+    "nombre": "Taller Mecánico Ruta 3",
+    "direccion": "Ruta 3 km 8",
+    "telefono": "11-6677-8899",
+    "tipo": "comercio"
+  },
+  {
+    "id_cliente": 10,
+    "nombre": "María Elena Sosa",
+    "direccion": "Calle Belgrano 99",
+    "telefono": "11-8899-0011",
+    "tipo": "particular"
+  },
+  {
+    "id_cliente": 11,
+    "nombre": "Farmacia Del Pueblo",
+    "direccion": "Av. Rivadavia 650",
+    "telefono": "11-1122-3344",
+    "tipo": "comercio"
+  },
+  {
+    "id_cliente": 12,
+    "nombre": "Roberto Díaz",
+    "direccion": "Los Álamos 310",
+    "telefono": "11-9900-1122",
+    "tipo": "particular"
   }
 ]

@@ -8,6 +8,7 @@ from clientes import menu_clientes
 from tecnicos import menu_tecnicos
 from pedidos import menu_pedidos
 from cobros import menu_cobros
+from historial import menu_historial
 from repuestos import menu_repuestos
 from stock import menu_stock
 
@@ -21,7 +22,7 @@ def main():
         print("2. Técnicos")
         print("3. Pedidos")
         print("4. Cobros")
-        print("5. Historial       (próximamente)")
+        print("5. Historial")
         print("6. Repuestos")
         print("7. Stock del estante")
         print("0. Salir")
@@ -37,7 +38,7 @@ def main():
         elif opcion == "4":
             menu_cobros()
         elif opcion == "5":
-            print("Ese módulo todavía no está disponible.")
+            menu_historial()
         elif opcion == "6":
             menu_repuestos()
         elif opcion == "7":

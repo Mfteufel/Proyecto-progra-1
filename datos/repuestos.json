@@ -30,5 +30,101 @@
     "descripcion": "1 rollos de Rollo de cable",
     "estado": "solicitado",
     "precio": null
+  },
+  {
+    "id_repuesto": 5,
+    "id_pedido": 5,
+    "id_tecnico": 3,
+    "descripcion": "2 splits Inverter 3000 frigorías",
+    "estado": "instalado",
+    "precio": 28000.0
+  },
+  {
+    "id_repuesto": 6,
+    "id_pedido": 5,
+    "id_tecnico": 3,
+    "descripcion": "Caños de cobre para instalación splits",
+    "estado": "entregado",
+    "precio": 4500.0
+  },
+  {
+    "id_repuesto": 7,
+    "id_pedido": 4,
+    "id_tecnico": null,
+    "descripcion": "Toma schuko empotrable",
+    "estado": "solicitado",
+    "precio": null
+  },
+  {
+    "id_repuesto": 8,
+    "id_pedido": 6,
+    "id_tecnico": null,
+    "descripcion": "Cable unipolar 2.5mm² fase/neutro/tierra",
+    "estado": "comprado",
+    "precio": 6800.0
+  },
+  {
+    "id_repuesto": 9,
+    "id_pedido": 9,
+    "id_tecnico": null,
+    "descripcion": "Capacitor de arranque compresor 40µF",
+    "estado": "solicitado",
+    "precio": null
+  },
+  {
+    "id_repuesto": 10,
+    "id_pedido": 9,
+    "id_tecnico": 5,
+    "descripcion": "Gas refrigerante R32",
+    "estado": "comprado",
+    "precio": 5100.0
+  },
+  {
+    "id_repuesto": 11,
+    "id_pedido": 11,
+    "id_tecnico": 3,
+    "descripcion": "Transformador 220V/12V para cámaras",
+    "estado": "instalado",
+    "precio": 3800.0
+  },
+  {
+    "id_repuesto": 12,
+    "id_pedido": 11,
+    "id_tecnico": 3,
+    "descripcion": "Canaleta para cableado de cámaras",
+    "estado": "instalado",
+    "precio": 1200.0
+  },
+  {
+    "id_repuesto": 13,
+    "id_pedido": 13,
+    "id_tecnico": null,
+    "descripcion": "Termostato digital universal aire",
+    "estado": "solicitado",
+    "precio": null
+  },
+  {
+    "id_repuesto": 14,
+    "id_pedido": 15,
+    "id_tecnico": 6,
+    "descripcion": "Llave térmica 16A doble polo",
+    "estado": "entregado",
+    "precio": 2900.0
+  },
+  {
+    "id_repuesto": 15,
+    "id_pedido": 8,
+    "id_tecnico": 4,
+    "descripcion": "3 unidades de Caño plástico blanco",
+    "estado": "instalado",
+    "precio": null
+  },
+  {
+    "id_repuesto": 16,
+    "id_pedido": 14,
+    "id_tecnico": null,
+    "descripcion": "Luces de emergencia LED 90 minutos",
+    "estado": "solicitado",
+    "precio": null
   }
 ]
