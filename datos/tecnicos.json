@@ -1,0 +1,50 @@
+[
+  {
+    "id_tecnico": 1,
+    "nombre": "Carlos",
+    "especialidad": "electrica",
+    "estado": "disponible"
+  },
+  {
+    "id_tecnico": 2,
+    "nombre": "El Negro",
+    "especialidad": "aires",
+    "estado": "ocupado"
+  },
+  {
+    "id_tecnico": 3,
+    "nombre": "Santi",
+    "especialidad": "multiuso",
+    "estado": "disponible"
+  },
+  {
+    "id_tecnico": 4,
+    "nombre": "Marta",
+    "especialidad": "electrica",
+    "estado": "ocupado"
+  },
+  {
+    "id_tecnico": 5,
+    "nombre": "Rodrigo",
+    "especialidad": "aires",
+    "estado": "disponible"
+  },
+  {
+    "id_tecnico": 6,
+    "nombre": "Facundo",
+    "especialidad": "multiuso",
+    "estado": "disponible"
+  },
+  {
+    "id_tecnico": 7,
+    "nombre": "Natalia",
+    "especialidad": "electrica",
+    "estado": "disponible"
+  },
+  {
+    "id_tecnico": 8,
+    "nombre": "Bruno",
+    "especialidad": "multiuso",
+    "estado": "ocupado"
+  }
+]

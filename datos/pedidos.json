@@ -1,0 +1,152 @@
+[
+  {
+    "id_pedido": 1,
+    "id_cliente": 1,
+    "id_tecnico": 1,
+    "descripcion": "Cortocircuito en cocina, saltó la térmica",
+    "urgente": true,
+    "fecha": "05/06/2026",
+    "estado": "en_curso",
+    "precio": null
+  },
+  {
+    "id_pedido": 2,
+    "id_cliente": 2,
+    "id_tecnico": 2,
+    "descripcion": "Aire del local no enfría, hace ruido raro",
+    "urgente": true,
+    "fecha": "06/06/2026",
+    "estado": "cobrado",
+    "precio": 15000.0
+  },
+  {
+    "id_pedido": 3,
+    "id_cliente": 1,
+    "id_tecnico": null,
+    "descripcion": "Tablero recalentado, piden revisión preventiva",
+    "urgente": false,
+    "fecha": "10/06/2026",
+    "estado": "asignado",
+    "precio": null
+  },
+  {
+    "id_pedido": 4,
+    "id_cliente": 3,
+    "id_tecnico": null,
+    "descripcion": "No funciona el enchufe del living, sin luz en esa zona",
+    "urgente": false,
+    "fecha": "15/06/2026",
+    "estado": "pendiente",
+    "precio": null
+  },
+  {
+    "id_pedido": 5,
+    "id_cliente": 4,
+    "id_tecnico": 3,
+    "descripcion": "Instalación de dos splits nuevos en el salón del restaurante",
+    "urgente": true,
+    "fecha": "01/06/2026",
+    "estado": "terminado",
+    "precio": 45000.0
+  },
+  {
+    "id_pedido": 6,
+    "id_cliente": 6,
+    "id_tecnico": 1,
+    "descripcion": "Revisión del tablero eléctrico y reemplazo de cableado viejo",
+    "urgente": false,
+    "fecha": "18/06/2026",
+    "estado": "asignado",
+    "precio": null
+  },
+  {
+    "id_pedido": 7,
+    "id_cliente": 2,
+    "id_tecnico": 2,
+    "descripcion": "Carga de gas en el split de la trastienda",
+    "urgente": false,
+    "fecha": "01/05/2026",
+    "estado": "cobrado",
+    "precio": 12000.0
+  },
+  {
+    "id_pedido": 8,
+    "id_cliente": 1,
+    "id_tecnico": 4,
+    "descripcion": "Instalación de tomacorrientes adicionales en dormitorio",
+    "urgente": true,
+    "fecha": "10/06/2026",
+    "estado": "en_curso",
+    "precio": null
+  },
+  {
+    "id_pedido": 9,
+    "id_cliente": 9,
+    "id_tecnico": 5,
+    "descripcion": "Reparación del split del taller, no arranca el compresor",
+    "urgente": true,
+    "fecha": "17/06/2026",
+    "estado": "en_curso",
+    "precio": null
+  },
+  {
+    "id_pedido": 10,
+    "id_cliente": 10,
+    "id_tecnico": null,
+    "descripcion": "Humedad en pared del dormitorio, revisar cañería oculta",
+    "urgente": false,
+    "fecha": "19/06/2026",
+    "estado": "pendiente",
+    "precio": null
+  },
+  {
+    "id_pedido": 11,
+    "id_cliente": 7,
+    "id_tecnico": 3,
+    "descripcion": "Instalación eléctrica para cámaras de seguridad en el local",
+    "urgente": false,
+    "fecha": "20/05/2026",
+    "estado": "terminado",
+    "precio": 18000.0
+  },
+  {
+    "id_pedido": 12,
+    "id_cliente": 9,
+    "id_tecnico": 2,
+    "descripcion": "Recarga de gas aire acondicionado de la oficina",
+    "urgente": false,
+    "fecha": "15/04/2026",
+    "estado": "cobrado",
+    "precio": 9000.0
+  },
+  {
+    "id_pedido": 13,
+    "id_cliente": 4,
+    "id_tecnico": 1,
+    "descripcion": "Cambio de termostato en el aire del depósito",
+    "urgente": false,
+    "fecha": "19/06/2026",
+    "estado": "asignado",
+    "precio": null
+  },
+  {
+    "id_pedido": 14,
+    "id_cliente": 11,
+    "id_tecnico": null,
+    "descripcion": "Instalación de luces de emergencia en pasillos",
+    "urgente": true,
+    "fecha": "18/06/2026",
+    "estado": "pendiente",
+    "precio": null
+  },
+  {
+    "id_pedido": 15,
+    "id_cliente": 12,
+    "id_tecnico": 6,
+    "descripcion": "Revisión general de instalación antes de vender la casa",
+    "urgente": false,
+    "fecha": "16/06/2026",
+    "estado": "en_curso",
+    "precio": null
+  }
+]
