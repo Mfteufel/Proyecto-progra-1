@@ -130,30 +130,34 @@ def avanzar_estado_repuesto(id_repuesto, nuevo_estado, id_tecnico=None):
 
 def menu_repuestos():
     while True:
-        print("\n=== REPUESTOS ===")
-        print("1. Ver repuestos de un pedido")
-        print("2. Ver repuestos de un técnico")
-        print("3. Cargar repuesto especial")
-        print("4. Avanzar estado de repuesto")
-        print("5. Ver pendientes de compra")
-        print("0. Volver al menú principal")
+        try:
+            print("\n=== REPUESTOS ===")
+            print("1. Ver repuestos de un pedido")
+            print("2. Ver repuestos de un técnico")
+            print("3. Cargar repuesto especial")
+            print("4. Avanzar estado de repuesto")
+            print("5. Ver pendientes de compra")
+            print("0. Volver al menú principal")
 
-        opcion = input("\nElegí una opción: ").strip()
+            opcion = input("\nElegí una opción: ").strip()
 
-        if opcion == "1":
-            _repuestos_por_pedido()
-        elif opcion == "2":
-            _repuestos_por_tecnico()
-        elif opcion == "3":
-            _cargar_repuesto_especial()
-        elif opcion == "4":
-            _avanzar_estado()
-        elif opcion == "5":
-            _pendientes_compra()
-        elif opcion == "0":
-            break
-        else:
-            print("Opción inválida, elegí una de las que aparecen en el menú.")
+            if opcion == "1":
+                _repuestos_por_pedido()
+            elif opcion == "2":
+                _repuestos_por_tecnico()
+            elif opcion == "3":
+                _cargar_repuesto_especial()
+            elif opcion == "4":
+                _avanzar_estado()
+            elif opcion == "5":
+                _pendientes_compra()
+            elif opcion == "0":
+                break
+            else:
+                raise ValueError("Opción inválida, elegí una de las que aparecen en el menú.")
+
+        except ValueError as e:
+            print(f"Error: {e}")
 
 
 def _formato_repuesto(r):

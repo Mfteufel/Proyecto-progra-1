@@ -90,15 +90,16 @@ def generar_id(lista, nombre_id):
 
 def buscar_por_id(lista, nombre_id, valor):
     """
-    Busca el primer diccionario cuyo campo nombre_id sea igual a valor.
+    Busca recursivamente el primer diccionario cuyo campo nombre_id sea igual a valor.
 
     Recibe: lista (list de dicts), nombre_id (str), valor (int o str).
     Devuelve: el dict encontrado, o None si no existe.
     """
-    for registro in lista:
-        if registro[nombre_id] == valor:
-            return registro
-    return None
+    if not lista:
+        return None
+    if lista[0][nombre_id] == valor:
+        return lista[0]
+    return buscar_por_id(lista[1:], nombre_id, valor)
 
 
 # ── Helpers de input por consola ──────────────────────────────────────────────
@@ -171,6 +172,11 @@ def pedir_confirmacion(mensaje):
 
         except ValueError as e:
             print(f"Error: {e}")
-            
+
+
 def validar_telefono(telefono):
-    return bool(re.fullmatch(r"\d{8,15}", telefono))
+    """
+    Valida que el teléfono tenga entre 8 y 15 dígitos.
+    """
+    patron = r"[\d\- ]{8,15}"
+    return bool(re.fullmatch(patron, telefono))

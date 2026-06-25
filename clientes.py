@@ -28,6 +28,11 @@ def crear_cliente(datos):
             f"Tipo inválido. Debe ser uno de: {TIPOS_CLIENTE}"
         )
 
+    if not validar_telefono(datos.get("telefono", "")):
+        raise ValueError(
+            "Teléfono inválido. Solo se permiten números, guiones, espacios y el símbolo +."
+        )
+
     clientes = cargar_datos(ARCHIVO_CLIENTES)
     cliente = {
         "id_cliente": generar_id(clientes, "id_cliente"),
@@ -78,6 +83,10 @@ def modificar_cliente(id_cliente, nuevos_datos):
 
     if "tipo" in nuevos_datos and nuevos_datos["tipo"] not in TIPOS_CLIENTE:
         print(f"Tipo inválido. Debe ser uno de: {TIPOS_CLIENTE}")
+        return None
+
+    if "telefono" in nuevos_datos and not validar_telefono(nuevos_datos["telefono"]):
+        print("Teléfono inválido. Solo se permiten números, guiones, espacios y el símbolo +.")
         return None
 
     cliente.update(nuevos_datos)

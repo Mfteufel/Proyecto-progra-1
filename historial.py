@@ -7,6 +7,8 @@ Menú:              menu_historial.
 Módulo de solo lectura: no modifica ningún archivo .json.
 """
 
+import re
+
 from utils import (
     cargar_datos, buscar_por_id,
     pedir_entero, pedir_texto,
@@ -86,17 +88,8 @@ def buscar_garantia(id_cliente, texto):
     """
     historial = historial_por_cliente(id_cliente)
 
-    if historial is None:
-        raise ValueError(
-            f"No existe un cliente con ID {id_cliente}."
-        )
-
-    texto_lower = texto.lower()
-
-    return [
-        p for p in historial["pedidos"]
-        if texto_lower in p["descripcion"].lower()
-    ]
+    patron = re.compile(texto, re.IGNORECASE)
+    return [p for p in historial["pedidos"] if patron.search(p["descripcion"])]
 
 # ── Menú de historial ─────────────────────────────────────────────────────────
 
