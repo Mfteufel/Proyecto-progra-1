@@ -250,7 +250,7 @@ No se requiere instalar nada. Todo es biblioteca estándar de Python 3:
 - **Un solo proceso a la vez:** los `.json` se leen y escriben en cada operación. Si dos personas abren el sistema al mismo tiempo pueden pisarse los datos.
 - **Sin paginación:** si hay muchos clientes o pedidos, se listan todos juntos en consola.
 - **IDs no se reutilizan:** si se elimina un cliente con ID 5, el próximo cliente creado recibe el ID siguiente al máximo actual, no el 5.
-- **Fechas sin validación de formato:** el sistema guarda la fecha del día automáticamente; si se carga una fecha manual (por ejemplo en tests), no se valida el formato `DD/MM/AAAA`.
+- **Fecha manual obligatoria:** al crear un pedido o registrar un cobro, el sistema pide la fecha al usuario en formato `DD/MM/AAAA`. Se valida el formato pero no el rango (por ejemplo, no detecta fechas imposibles como `99/99/9999`).
 - **Sin backup automático:** si un archivo `.json` se corrompe manualmente, el sistema lanza un error. No hay recuperación automática.
 
 ---
