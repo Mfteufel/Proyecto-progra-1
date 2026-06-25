@@ -30,8 +30,7 @@ def crear_pedido(datos):
     """
     clientes = cargar_datos(ARCHIVO_CLIENTES)
     if buscar_por_id(clientes, "id_cliente", datos["id_cliente"]) is None:
-        print(f"No existe un cliente con ID {datos['id_cliente']}.")
-        return None
+        raise ValueError(f"No existe un cliente con ID {datos['id_cliente']}.")
 
     pedidos = cargar_datos(ARCHIVO_PEDIDOS)
     pedido = {
@@ -191,40 +190,40 @@ def eliminar_pedido(id_pedido):
 
 def menu_pedidos():
     while True:
-        print("\n=== PEDIDOS ===")
-        print("1. Listar todos los pedidos")
-        print("2. Filtrar por estado")
-        print("3. Ver pedidos de un cliente")
-        print("4. Ver pedidos de un técnico")
-        print("5. Cargar pedido nuevo")
-        print("6. Asignar / cambiar técnico")
-        print("7. Cambiar estado de pedido")
-        print("8. Eliminar pedido")
-        print("0. Volver al menú principal")
+        try:
+            print("\n=== PEDIDOS ===")
+            ...
+            opcion = input("\nElegí una opción: ").strip()
 
-        opcion = input("\nElegí una opción: ").strip()
+            if opcion == "1":
+                _listar_pedidos()
+            elif opcion == "2":
+                _filtrar_por_estado()
+            elif opcion == "3":
+                _pedidos_por_cliente()
+            elif opcion == "4":
+                _pedidos_por_tecnico()
+            elif opcion == "5":
+                _cargar_pedido()
+            elif opcion == "6":
+                _asignar_tecnico()
+            elif opcion == "7":
+                _cambiar_estado()
+            elif opcion == "8":
+                _eliminar_pedido()
+            elif opcion == "0":
+                break
+            else:
+                raise ValueError("La opción ingresada no existe.")
 
-        if opcion == "1":
-            _listar_pedidos()
-        elif opcion == "2":
-            _filtrar_por_estado()
-        elif opcion == "3":
-            _pedidos_por_cliente()
-        elif opcion == "4":
-            _pedidos_por_tecnico()
-        elif opcion == "5":
-            _cargar_pedido()
-        elif opcion == "6":
-            _asignar_tecnico()
-        elif opcion == "7":
-            _cambiar_estado()
-        elif opcion == "8":
-            _eliminar_pedido()
-        elif opcion == "0":
-            break
-        else:
-            print("Opción inválida, elegí una de las que aparecen en el menú.")
+        except ValueError as e:
+            print(f"Error: {e}")
 
+        except Exception as e:
+            print(f"Error inesperado: {e}")
+
+        finally:
+            print("Operación finalizada.")
 
 def _formato_pedido(p):
     tecnico = f"Técnico ID {p['id_tecnico']}" if p["id_tecnico"] else "Sin técnico"
@@ -280,21 +279,32 @@ def _pedidos_por_tecnico():
 
 
 def _cargar_pedido():
-    print("\n--- Cargar pedido nuevo ---")
-    id_cliente = pedir_entero("ID del cliente: ")
-    descripcion = pedir_texto("Descripción del trabajo: ")
-    urgente = pedir_confirmacion("¿Es urgente?")
-    fecha = date.today().strftime("%d/%m/%Y")
+    try:
+        print("\n--- Cargar pedido nuevo ---")
 
-    pedido = crear_pedido({
-        "id_cliente": id_cliente,
-        "descripcion": descripcion,
-        "urgente": urgente,
-        "fecha": fecha
-    })
-    if pedido:
-        print(f"\nPedido #{pedido['id_pedido']} creado para el cliente {id_cliente}.")
+        id_cliente = pedir_entero("ID del cliente: ")
+        descripcion = pedir_texto("Descripción del trabajo: ")
 
+        if descripcion.strip() == "":
+            raise ValueError("La descripción no puede estar vacía.")
+
+        urgente = pedir_confirmacion("¿Es urgente?")
+        fecha = date.today().strftime("%d/%m/%Y")
+
+        pedido = crear_pedido({
+            "id_cliente": id_cliente,
+            "descripcion": descripcion,
+            "urgente": urgente,
+            "fecha": fecha
+        })
+
+        print(f"\nPedido #{pedido['id_pedido']} creado correctamente.")
+
+    except ValueError as e:
+        print(f"Error: {e}")
+
+    finally:
+        print("Fin de la carga del pedido.")
 
 def _asignar_tecnico():
     print("\n--- Asignar / cambiar técnico ---")

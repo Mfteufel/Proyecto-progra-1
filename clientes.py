@@ -8,9 +8,10 @@ Menú:              menu_clientes.
 
 from utils import (
     cargar_datos, guardar_datos, generar_id, buscar_por_id,
-    pedir_texto, pedir_entero, pedir_opcion, pedir_confirmacion,
+    pedir_texto, pedir_entero, validar_telefono, pedir_opcion, pedir_confirmacion,
     ARCHIVO_CLIENTES, ARCHIVO_PEDIDOS, TIPOS_CLIENTE
 )
+
 
 
 # ── Funciones de datos ────────────────────────────────────────────────────────
@@ -23,8 +24,9 @@ def crear_cliente(datos):
     Devuelve: el dict del cliente creado, o None si el tipo es inválido.
     """
     if datos.get("tipo") not in TIPOS_CLIENTE:
-        print(f"Tipo inválido. Debe ser uno de: {TIPOS_CLIENTE}")
-        return None
+        raise ValueError(
+            f"Tipo inválido. Debe ser uno de: {TIPOS_CLIENTE}"
+        )
 
     clientes = cargar_datos(ARCHIVO_CLIENTES)
     cliente = {
@@ -111,49 +113,86 @@ def eliminar_cliente(id_cliente):
 
 def menu_clientes():
     while True:
-        print("\n=== CLIENTES ===")
-        print("1. Cargar cliente nuevo")
-        print("2. Listar todos los clientes")
-        print("3. Buscar cliente por ID")
-        print("4. Modificar cliente")
-        print("5. Eliminar cliente")
-        print("0. Volver al menú principal")
+        try:
+            print("\n=== CLIENTES ===")
+            print("1. Cargar cliente nuevo")
+            print("2. Listar todos los clientes")
+            print("3. Buscar cliente por ID")
+            print("4. Modificar cliente")
+            print("5. Eliminar cliente")
+            print("0. Volver al menú principal")
 
-        opcion = input("\nElegí una opción: ").strip()
+            opcion = input("\nElegí una opción: ").strip()
 
-        if opcion == "1":
-            _cargar_cliente()
-        elif opcion == "2":
-            _listar_clientes()
-        elif opcion == "3":
-            _buscar_cliente()
-        elif opcion == "4":
-            _modificar_cliente()
-        elif opcion == "5":
-            _eliminar_cliente()
-        elif opcion == "0":
-            break
-        else:
-            print("Opción inválida, elegí una de las que aparecen en el menú.")
+            if opcion == "1":
+                _cargar_cliente()
 
+            elif opcion == "2":
+                _listar_clientes()
+
+            elif opcion == "3":
+                _buscar_cliente()
+
+            elif opcion == "4":
+                _modificar_cliente()
+
+            elif opcion == "5":
+                _eliminar_cliente()
+
+            elif opcion == "0":
+                break
+
+            else:
+                raise ValueError(
+                    "Opción inválida. Elegí una opción del menú."
+                )
+
+        except ValueError as e:
+            print(f"Error: {e}")
+
+        except Exception as e:
+            print(f"Error inesperado: {e}")
+            print(f"Tipo de excepción: {type(e).__name__}")
+
+        finally:
+            print("Volviendo al menú de clientes...")
 
 def _cargar_cliente():
-    print("\n--- Cargar cliente nuevo ---")
-    nombre = pedir_texto("Nombre del cliente: ")
-    direccion = pedir_texto("Dirección: ")
-    telefono = pedir_texto("Teléfono: ")
-    print("Tipo de cliente:")
-    tipo = pedir_opcion("Elegí el tipo: ", TIPOS_CLIENTE)
+    try:
+        print("\n--- Cargar cliente nuevo ---")
 
-    cliente = crear_cliente({
-        "nombre": nombre,
-        "direccion": direccion,
-        "telefono": telefono,
-        "tipo": tipo
-    })
-    if cliente:
-        print(f"\nCliente '{cliente['nombre']}' cargado con ID {cliente['id_cliente']}.")
+        nombre = pedir_texto("Nombre del cliente: ")
+        direccion = pedir_texto("Dirección: ")
+        
+        while True:
+            telefono = pedir_texto("Teléfono: ")
+            if validar_telefono(telefono):
+                break
+            print("Teléfono inválido. Debe contener entre 8 y 15 dígitos.")
 
+        print("Tipo de cliente:")
+        tipo = pedir_opcion("Elegí el tipo: ", TIPOS_CLIENTE)
+
+        cliente = crear_cliente({
+            "nombre": nombre,
+            "direccion": direccion,
+            "telefono": telefono,
+            "tipo": tipo
+        })
+
+        print(
+            f"\nCliente '{cliente['nombre']}' "
+            f"cargado con ID {cliente['id_cliente']}."
+        )
+
+    except ValueError as e:
+        print(f"Error: {e}")
+
+    except Exception as e:
+        print(f"Error inesperado: {e}")
+
+    finally:
+        print("Operación finalizada.")
 
 def _listar_clientes():
     print("\n--- Clientes registrados ---")

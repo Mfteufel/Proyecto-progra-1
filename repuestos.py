@@ -28,9 +28,11 @@ def registrar_repuesto(datos):
     Devuelve: el dict del repuesto creado, o None si el pedido no existe.
     """
     pedidos = cargar_datos(ARCHIVO_PEDIDOS)
+
     if buscar_por_id(pedidos, "id_pedido", datos["id_pedido"]) is None:
-        print(f"No existe un pedido con ID {datos['id_pedido']}.")
-        return None
+        raise ValueError(
+            f"No existe un pedido con ID {datos['id_pedido']}."
+        )
 
     repuestos = cargar_datos(ARCHIVO_REPUESTOS)
     repuesto = {
@@ -183,28 +185,48 @@ def _repuestos_por_tecnico():
 
 
 def _cargar_repuesto_especial():
-    print("\n--- Cargar repuesto especial ---")
-    print("(Usá esto para piezas que no están en el estante.)")
-    print("(Para insumos del estante usá la opción 'Usar insumo del estante' en el menú de Stock.)")
-    id_pedido = pedir_entero("ID del pedido: ")
-    descripcion = pedir_texto("Descripción del repuesto: ")
+    try:
+        print("\n--- Cargar repuesto especial ---")
 
-    while True:
-        try:
-            precio_str = input("Precio (Enter para dejarlo vacío): $").strip()
-            precio = float(precio_str) if precio_str else None
-            break
-        except ValueError:
-            print("  Ingresá un número válido o dejá vacío.")
+        id_pedido = pedir_entero("ID del pedido: ")
+        descripcion = pedir_texto("Descripción del repuesto: ")
 
-    repuesto = registrar_repuesto({
-        "id_pedido": id_pedido,
-        "descripcion": descripcion,
-        "precio": precio
-    })
-    if repuesto:
-        print(f"\nRepuesto '{descripcion}' registrado en el pedido #{id_pedido}.")
+        if descripcion.strip() == "":
+            raise ValueError(
+                "La descripción del repuesto no puede estar vacía."
+            )
 
+        while True:
+            try:
+                precio_str = input(
+                    "Precio (Enter para dejarlo vacío): $"
+                ).strip()
+
+                precio = float(precio_str) if precio_str else None
+                break
+
+            except ValueError:
+                print("Ingresá un número válido.")
+
+        repuesto = registrar_repuesto({
+            "id_pedido": id_pedido,
+            "descripcion": descripcion,
+            "precio": precio
+        })
+
+        print(
+            f"\nRepuesto '{descripcion}' registrado en el pedido #{id_pedido}."
+        )
+
+    except ValueError as e:
+        print(f"Error: {e}")
+
+    except Exception as e:
+        print(f"Error inesperado: {e}")
+        print(f"Tipo: {type(e).__name__}")
+
+    finally:
+        print("Fin de la operación.")
 
 def _avanzar_estado():
     print("\n--- Avanzar estado de repuesto ---")

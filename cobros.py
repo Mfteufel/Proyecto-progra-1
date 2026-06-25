@@ -146,31 +146,49 @@ def marcar_pago(id_cobro):
 
 def menu_cobros():
     while True:
-        print("\n=== COBROS ===")
-        print("1. Ver cobros de un pedido")
-        print("2. Registrar cobro")
-        print("3. Marcar cobro como pagado")
-        print("4. Ver deuda de un pedido")
-        print("5. Ver deudores")
-        print("0. Volver al menú principal")
+        try:
+            print("\n=== COBROS ===")
+            print("1. Ver cobros de un pedido")
+            print("2. Registrar cobro")
+            print("3. Marcar cobro como pagado")
+            print("4. Ver deuda de un pedido")
+            print("5. Ver deudores")
+            print("0. Volver al menú principal")
 
-        opcion = input("\nElegí una opción: ").strip()
+            opcion = input("\nElegí una opción: ").strip()
 
-        if opcion == "1":
-            _ver_cobros_pedido()
-        elif opcion == "2":
-            _registrar_cobro()
-        elif opcion == "3":
-            _marcar_pago()
-        elif opcion == "4":
-            _ver_deuda_pedido()
-        elif opcion == "5":
-            _ver_deudores()
-        elif opcion == "0":
-            break
-        else:
-            print("Opción inválida, elegí una de las que aparecen en el menú.")
+            if opcion == "1":
+                _ver_cobros_pedido()
 
+            elif opcion == "2":
+                _registrar_cobro()
+
+            elif opcion == "3":
+                _marcar_pago()
+
+            elif opcion == "4":
+                _ver_deuda_pedido()
+
+            elif opcion == "5":
+                _ver_deudores()
+
+            elif opcion == "0":
+                break
+
+            else:
+                raise ValueError(
+                    "Opción inválida. Elegí una opción del menú."
+                )
+
+        except ValueError as e:
+            print(f"Error: {e}")
+
+        except Exception as e:
+            print(f"Error inesperado: {e}")
+            print(f"Tipo de excepción: {type(e).__name__}")
+
+        finally:
+            print("Volviendo al menú de cobros...")
 
 def _ver_cobros_pedido():
     print("\n--- Cobros de un pedido ---")
@@ -189,68 +207,119 @@ def _ver_cobros_pedido():
 
 def _registrar_cobro():
     from datetime import date
-    print("\n--- Registrar cobro ---")
-    id_pedido = pedir_entero("ID del pedido: ")
 
-    # Mostrar precio del pedido y cargarlo si falta
-    pedidos = cargar_datos(ARCHIVO_PEDIDOS)
-    pedido = buscar_por_id(pedidos, "id_pedido", id_pedido)
-    if pedido is None:
-        print(f"No existe un pedido con ID {id_pedido}.")
-        return
+    try:
+        print("\n--- Registrar cobro ---")
 
-    if pedido["estado"] not in ("terminado", "cobrado"):
-        print(f"El pedido está en '{pedido['estado']}'. Solo se puede cobrar si está en 'terminado' o 'cobrado'.")
-        return
+        id_pedido = pedir_entero("ID del pedido: ")
 
-    if pedido["precio"] is None:
-        print("El pedido no tiene precio cargado.")
+        # Mostrar precio del pedido y cargarlo si falta
+        pedidos = cargar_datos(ARCHIVO_PEDIDOS)
+        pedido = buscar_por_id(pedidos, "id_pedido", id_pedido)
+
+        if pedido is None:
+            raise ValueError(
+                f"No existe un pedido con ID {id_pedido}."
+            )
+
+        if pedido["estado"] not in ("terminado", "cobrado"):
+            raise ValueError(
+                f"El pedido está en '{pedido['estado']}'. "
+                "Solo se puede cobrar si está en 'terminado' o 'cobrado'."
+            )
+
+        if pedido["precio"] is None:
+            print("El pedido no tiene precio cargado.")
+
+            while True:
+                try:
+                    precio = float(
+                        input("Ingresá el precio total del trabajo: $").strip()
+                    )
+
+                    if precio <= 0:
+                        raise ValueError(
+                            "El precio debe ser mayor a cero."
+                        )
+
+                    break
+
+                except ValueError as e:
+                    print(f"Error: {e}")
+
+            pedido["precio"] = precio
+            guardar_datos(ARCHIVO_PEDIDOS, pedidos)
+
+            print(
+                f"Precio ${precio} guardado en el pedido #{id_pedido}."
+            )
+
+        else:
+            print(f"Precio del trabajo: ${pedido['precio']}")
+
         while True:
             try:
-                precio = float(input("Ingresá el precio total del trabajo: $").strip())
-                if precio > 0:
-                    break
-                print("  El precio debe ser mayor a cero.")
-            except ValueError:
-                print("  Ingresá un número válido.")
-        pedido["precio"] = precio
-        guardar_datos(ARCHIVO_PEDIDOS, pedidos)
-        print(f"Precio ${precio} guardado en el pedido #{id_pedido}.")
-    else:
-        print(f"Precio del trabajo: ${pedido['precio']}")
+                monto = float(
+                    input("Monto de este cobro: $").strip()
+                )
 
-    while True:
-        try:
-            monto = float(input("Monto de este cobro: $").strip())
-            if monto > 0:
+                if monto <= 0:
+                    raise ValueError(
+                        "El monto debe ser mayor a cero."
+                    )
+
                 break
-            print("  El monto debe ser mayor a cero.")
-        except ValueError:
-            print("  Ingresá un número válido.")
 
-    print("Forma de pago:")
-    forma_pago = pedir_opcion("Elegí la forma de pago: ", FORMAS_PAGO)
-    recibido_por = pedir_texto("Recibido por: ")
-    fecha = date.today().strftime("%d/%m/%Y")
+            except ValueError as e:
+                print(f"Error: {e}")
 
-    cobro = registrar_cobro({
-        "id_pedido": id_pedido,
-        "monto": monto,
-        "forma_pago": forma_pago,
-        "recibido_por": recibido_por,
-        "fecha": fecha
-    })
-    if cobro:
-        print(f"\nCobro #{cobro['id_cobro']} registrado por ${monto}.")
+        print("Forma de pago:")
+        forma_pago = pedir_opcion(
+            "Elegí la forma de pago: ",
+            FORMAS_PAGO
+        )
 
+        recibido_por = pedir_texto("Recibido por: ")
+
+        fecha = date.today().strftime("%d/%m/%Y")
+
+        cobro = registrar_cobro({
+            "id_pedido": id_pedido,
+            "monto": monto,
+            "forma_pago": forma_pago,
+            "recibido_por": recibido_por,
+            "fecha": fecha
+        })
+
+        if cobro:
+            print(
+                f"\nCobro #{cobro['id_cobro']} "
+                f"registrado por ${monto}."
+            )
+
+    except ValueError as e:
+        print(f"Error: {e}")
+
+    except Exception as e:
+        print(f"Error inesperado: {e}")
+        print(f"Tipo de excepción: {type(e).__name__}")
+
+    finally:
+        print("Operación finalizada.")
 
 def _marcar_pago():
     print("\n--- Marcar cobro como pagado ---")
     id_cobro = pedir_entero("ID del cobro: ")
     cobro = marcar_pago(id_cobro)
-    if cobro:
-        print(f"Cobro #{id_cobro} marcado como pagado.")
+    if cobro is None:
+        raise ValueError(
+            f"No existe un cobro con ID {id_cobro}."
+        )
 
+    if cobro["estado"] == "pagado":
+        raise ValueError(
+            f"El cobro {id_cobro} ya estaba marcado como pagado."
+        )
 
 def _ver_deuda_pedido():
     print("\n--- Deuda de un pedido ---")

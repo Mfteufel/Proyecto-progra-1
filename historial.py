@@ -28,7 +28,7 @@ def historial_por_cliente(id_cliente):
     clientes = cargar_datos(ARCHIVO_CLIENTES)
     cliente = buscar_por_id(clientes, "id_cliente", id_cliente)
     if cliente is None:
-        return None
+        raise ValueError(f"No existe un cliente con ID {id_cliente}.")
 
     tecnicos = cargar_datos(ARCHIVO_TECNICOS)
     pedidos = cargar_datos(ARCHIVO_PEDIDOS)
@@ -85,117 +85,189 @@ def buscar_garantia(id_cliente, texto):
     Devuelve: lista de pedidos coincidentes con info completa, o None si el cliente no existe.
     """
     historial = historial_por_cliente(id_cliente)
+
     if historial is None:
-        return None
+        raise ValueError(
+            f"No existe un cliente con ID {id_cliente}."
+        )
 
     texto_lower = texto.lower()
-    return [p for p in historial["pedidos"] if texto_lower in p["descripcion"].lower()]
 
+    return [
+        p for p in historial["pedidos"]
+        if texto_lower in p["descripcion"].lower()
+    ]
 
 # ── Menú de historial ─────────────────────────────────────────────────────────
 
 def menu_historial():
     while True:
-        print("\n=== HISTORIAL ===")
-        print("1. Ver historial completo de un cliente")
-        print("2. Buscar trabajo por garantía")
-        print("0. Volver al menú principal")
+        try:
+            print("\n=== HISTORIAL ===")
+            print("1. Ver historial completo de un cliente")
+            print("2. Buscar trabajo por garantía")
+            print("0. Volver al menú principal")
 
-        opcion = input("\nElegí una opción: ").strip()
+            opcion = input("\nElegí una opción: ").strip()
 
-        if opcion == "1":
-            _ver_historial()
-        elif opcion == "2":
-            _buscar_garantia()
-        elif opcion == "0":
-            break
-        else:
-            print("Opción inválida, elegí una de las que aparecen en el menú.")
+            if opcion == "1":
+                _ver_historial()
 
+            elif opcion == "2":
+                _buscar_garantia()
+
+            elif opcion == "0":
+                break
+
+            else:
+                raise ValueError(
+                    "Opción inválida."
+                )
+
+        except ValueError as e:
+            print(f"Error: {e}")
+
+        except Exception as e:
+            print(f"Error inesperado: {e}")
 
 def _ver_historial():
-    print("\n--- Historial de cliente ---")
-    id_cliente = pedir_entero("ID del cliente: ")
-    historial = historial_por_cliente(id_cliente)
+    try:
+        print("\n--- Historial de cliente ---")
 
-    if historial is None:
-        print(f"No existe un cliente con ID {id_cliente}.")
-        return
+        id_cliente = pedir_entero("ID del cliente: ")
 
-    cliente = historial["cliente"]
-    pedidos = historial["pedidos"]
+        historial = historial_por_cliente(id_cliente)
 
-    print(f"\n{'─'*50}")
-    print(f"  Cliente: {cliente['nombre']}  [{cliente['tipo']}]")
-    print(f"  Dirección: {cliente['direccion']}  |  Tel: {cliente['telefono']}")
-    print(f"{'─'*50}")
+        cliente = historial["cliente"]
+        pedidos = historial["pedidos"]
 
-    if not pedidos:
-        print("  Este cliente no tiene pedidos registrados.")
-        return
+        print(f"\n{'─'*50}")
+        print(f"  Cliente: {cliente['nombre']}  [{cliente['tipo']}]")
+        print(f"  Dirección: {cliente['direccion']}  |  Tel: {cliente['telefono']}")
+        print(f"{'─'*50}")
 
-    for p in pedidos:
-        urgente = " [URGENTE]" if p["urgente"] else ""
-        precio = f"${p['precio']}" if p["precio"] is not None else "sin precio"
-        print(f"\n  Pedido #{p['id_pedido']} — {p['fecha']}{urgente}")
-        print(f"  Trabajo:  {p['descripcion']}")
-        print(f"  Estado:   {p['estado']}  |  Precio: {precio}")
-        print(f"  Técnico:  {p['tecnico']}")
+        if not pedidos:
+            print("  Este cliente no tiene pedidos registrados.")
+            return
 
-        if p["cobros"]:
-            print("  Cobros:")
-            for c in p["cobros"]:
-                fecha = c["fecha"] or "sin fecha"
-                print(f"    · ${c['monto']} — {c['forma_pago']} — {c['estado']} — {fecha}")
-        else:
-            print("  Cobros:   ninguno registrado")
+        for p in pedidos:
+            urgente = " [URGENTE]" if p["urgente"] else ""
+            precio = f"${p['precio']}" if p["precio"] is not None else "sin precio"
 
-        if p["repuestos"]:
-            print("  Repuestos:")
-            for r in p["repuestos"]:
-                precio_r = f"${r['precio']}" if r["precio"] is not None else "sin precio"
-                print(f"    · {r['descripcion']} — {r['estado']} — {precio_r}")
-        else:
-            print("  Repuestos: ninguno registrado")
+            print(f"\n  Pedido #{p['id_pedido']} — {p['fecha']}{urgente}")
+            print(f"  Trabajo:  {p['descripcion']}")
+            print(f"  Estado:   {p['estado']}  |  Precio: {precio}")
+            print(f"  Técnico:  {p['tecnico']}")
 
-    print(f"\n{'─'*50}")
+            if p["cobros"]:
+                print("  Cobros:")
+                for c in p["cobros"]:
+                    fecha = c["fecha"] or "sin fecha"
+                    print(
+                        f"    · ${c['monto']} — {c['forma_pago']} — "
+                        f"{c['estado']} — {fecha}"
+                    )
+            else:
+                print("  Cobros: ninguno registrado")
+
+            if p["repuestos"]:
+                print("  Repuestos:")
+                for r in p["repuestos"]:
+                    precio_r = (
+                        f"${r['precio']}"
+                        if r["precio"] is not None
+                        else "sin precio"
+                    )
+                    print(
+                        f"    · {r['descripcion']} — "
+                        f"{r['estado']} — {precio_r}"
+                    )
+            else:
+                print("  Repuestos: ninguno registrado")
+
+        print(f"\n{'─'*50}")
+
+    except ValueError as e:
+        print(f"Error: {e}")
+
+    except Exception as e:
+        print(f"Error inesperado: {e}")
+        print(f"Tipo de excepción: {type(e).__name__}")
+
+    finally:
+        print("\nConsulta finalizada.")
 
 
 def _buscar_garantia():
-    print("\n--- Buscar trabajo por garantía ---")
-    id_cliente = pedir_entero("ID del cliente: ")
-    texto = pedir_texto("Palabra clave a buscar: ")
+    try:
+        print("\n--- Buscar trabajo por garantía ---")
 
-    resultado = buscar_garantia(id_cliente, texto)
+        id_cliente = pedir_entero("ID del cliente: ")
+        texto = pedir_texto("Palabra clave a buscar: ")
 
-    if resultado is None:
-        print(f"No existe un cliente con ID {id_cliente}.")
-        return
+        if texto.strip() == "":
+            raise ValueError(
+                "Debe ingresar una palabra clave para realizar la búsqueda."
+            )
 
-    if not resultado:
-        print(f"No se encontraron trabajos que contengan '{texto}'.")
-        return
+        resultado = buscar_garantia(id_cliente, texto)
 
-    historial = historial_por_cliente(id_cliente)
-    cliente = historial["cliente"]
-    print(f"\nResultados para '{texto}' en el historial de {cliente['nombre']}:")
+        if not resultado:
+            print(f"No se encontraron trabajos que contengan '{texto}'.")
+            return
 
-    for p in resultado:
-        urgente = " [URGENTE]" if p["urgente"] else ""
-        precio = f"${p['precio']}" if p["precio"] is not None else "sin precio"
-        print(f"\n  Pedido #{p['id_pedido']} — {p['fecha']}{urgente}")
-        print(f"  Trabajo:  {p['descripcion']}")
-        print(f"  Estado:   {p['estado']}  |  Precio: {precio}")
-        print(f"  Técnico:  {p['tecnico']}")
+        historial = historial_por_cliente(id_cliente)
+        cliente = historial["cliente"]
 
-        if p["cobros"]:
-            print("  Cobros:")
-            for c in p["cobros"]:
-                fecha = c["fecha"] or "sin fecha"
-                print(f"    · ${c['monto']} — {c['forma_pago']} — {c['estado']} — {fecha}")
+        print(
+            f"\nResultados para '{texto}' "
+            f"en el historial de {cliente['nombre']}:"
+        )
 
-        if p["repuestos"]:
-            print("  Repuestos:")
-            for r in p["repuestos"]:
-                precio_r = f"${r['precio']}" if r["precio"] is not None else "sin precio"
-                print(f"    · {r['descripcion']} — {r['estado']} — {precio_r}")
+        for p in resultado:
+            urgente = " [URGENTE]" if p["urgente"] else ""
+            precio = (
+                f"${p['precio']}"
+                if p["precio"] is not None
+                else "sin precio"
+            )
+
+            print(f"\n  Pedido #{p['id_pedido']} — {p['fecha']}{urgente}")
+            print(f"  Trabajo:  {p['descripcion']}")
+            print(f"  Estado:   {p['estado']}  |  Precio: {precio}")
+            print(f"  Técnico:  {p['tecnico']}")
+
+            if p["cobros"]:
+                print("  Cobros:")
+                for c in p["cobros"]:
+                    fecha = c["fecha"] or "sin fecha"
+                    print(
+                        f"    · ${c['monto']} — "
+                        f"{c['forma_pago']} — "
+                        f"{c['estado']} — "
+                        f"{fecha}"
+                    )
+
+            if p["repuestos"]:
+                print("  Repuestos:")
+                for r in p["repuestos"]:
+                    precio_r = (
+                        f"${r['precio']}"
+                        if r["precio"] is not None
+                        else "sin precio"
+                    )
+                    print(
+                        f"    · {r['descripcion']} — "
+                        f"{r['estado']} — "
+                        f"{precio_r}"
+                    )
+
+    except ValueError as e:
+        print(f"Error: {e}")
+
+    except Exception as e:
+        print(f"Error inesperado: {e}")
+        print(f"Tipo de excepción: {type(e).__name__}")
+
+    finally:
+        print("\nBúsqueda finalizada.")

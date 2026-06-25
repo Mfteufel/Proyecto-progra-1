@@ -65,18 +65,21 @@ def reponer_stock(id_insumo, cantidad):
     Devuelve: el dict actualizado, o None si el insumo no existe o la cantidad es inválida.
     """
     if cantidad <= 0:
-        print("La cantidad a reponer debe ser mayor a cero.")
-        return None
+        raise ValueError(
+            "La cantidad a reponer debe ser mayor a cero."
+        )
 
     stock = cargar_datos(ARCHIVO_STOCK)
     insumo = buscar_por_id(stock, "id_insumo", id_insumo)
 
     if insumo is None:
-        print(f"No existe un insumo con ID {id_insumo}.")
-        return None
+        raise ValueError(
+            f"No existe un insumo con ID {id_insumo}."
+        )
 
     insumo["cantidad"] += cantidad
     guardar_datos(ARCHIVO_STOCK, stock)
+
     return insumo
 
 
@@ -130,31 +133,41 @@ def usar_insumo(id_insumo, cantidad, id_pedido, id_tecnico=None):
 
 def menu_stock():
     while True:
-        print("\n=== STOCK DEL ESTANTE ===")
-        print("1. Ver todo el stock")
-        print("2. Ver insumos bajos")
-        print("3. Usar insumo en un pedido")
-        print("4. Reponer stock")
-        print("5. Agregar insumo nuevo")
-        print("0. Volver al menú principal")
+        try:
+            print("\n=== STOCK DEL ESTANTE ===")
+            print("1. Ver todo el stock")
+            print("2. Ver insumos bajos")
+            print("3. Usar insumo en un pedido")
+            print("4. Reponer stock")
+            print("5. Agregar insumo nuevo")
+            print("0. Volver al menú principal")
 
-        opcion = input("\nElegí una opción: ").strip()
+            opcion = input("\nElegí una opción: ").strip()
 
-        if opcion == "1":
-            _ver_stock()
-        elif opcion == "2":
-            _ver_stock_bajo()
-        elif opcion == "3":
-            _usar_insumo()
-        elif opcion == "4":
-            _reponer_stock()
-        elif opcion == "5":
-            _agregar_insumo()
-        elif opcion == "0":
-            break
-        else:
-            print("Opción inválida, elegí una de las que aparecen en el menú.")
+            if opcion == "1":
+                _ver_stock()
+            elif opcion == "2":
+                _ver_stock_bajo()
+            elif opcion == "3":
+                _usar_insumo()
+            elif opcion == "4":
+                _reponer_stock()
+            elif opcion == "5":
+                _agregar_insumo()
+            elif opcion == "0":
+                break
+            else:
+                raise ValueError("Opción inválida.")
 
+        except ValueError as e:
+            print(f"Error: {e}")
+
+        except Exception as e:
+            print(f"Error inesperado: {e}")
+            print(f"Tipo de excepción: {type(e).__name__}")
+
+        finally:
+            print("Volviendo al menú...")
 
 def _formato_insumo(i, alerta=False):
     aviso = " ⚠ REPONER" if alerta else ""
@@ -200,27 +213,77 @@ def _usar_insumo():
 
 
 def _reponer_stock():
-    print("\n--- Reponer stock ---")
-    _ver_stock()
-    id_insumo = pedir_entero("\nID del insumo a reponer: ")
-    cantidad = pedir_entero("Cantidad a agregar: ")
+    try:
+        print("\n--- Reponer stock ---")
 
-    insumo = reponer_stock(id_insumo, cantidad)
-    if insumo:
-        print(f"Stock de '{insumo['nombre']}' actualizado: {insumo['cantidad']} {insumo['unidad']}.")
+        _ver_stock()
 
+        id_insumo = pedir_entero("\nID del insumo a reponer: ")
+        cantidad = pedir_entero("Cantidad a agregar: ")
+
+        insumo = reponer_stock(id_insumo, cantidad)
+
+        print(
+            f"Stock de '{insumo['nombre']}' actualizado: "
+            f"{insumo['cantidad']} {insumo['unidad']}."
+        )
+
+    except ValueError as e:
+        print(f"Error: {e}")
+
+    except Exception as e:
+        print(f"Error inesperado: {e}")
+
+    finally:
+        print("Operación finalizada.")
 
 def _agregar_insumo():
-    print("\n--- Agregar insumo nuevo ---")
-    nombre = pedir_texto("Nombre del insumo: ")
-    unidad = pedir_texto("Unidad (rollos, unidades, bolsas, etc.): ")
-    cantidad = pedir_entero("Cantidad inicial: ")
-    cantidad_minima = pedir_entero("Cantidad mínima antes de avisar: ")
+    try:
+        print("\n--- Agregar insumo nuevo ---")
 
-    insumo = agregar_insumo({
-        "nombre": nombre,
-        "unidad": unidad,
-        "cantidad": cantidad,
-        "cantidad_minima": cantidad_minima
-    })
-    print(f"\nInsumo '{insumo['nombre']}' agregado con ID {insumo['id_insumo']}.")
+        nombre = pedir_texto("Nombre del insumo: ")
+        unidad = pedir_texto("Unidad (rollos, unidades, bolsas, etc.): ")
+        cantidad = pedir_entero("Cantidad inicial: ")
+        cantidad_minima = pedir_entero("Cantidad mínima antes de avisar: ")
+
+        if nombre.strip() == "":
+            raise ValueError(
+                "El nombre del insumo no puede estar vacío."
+            )
+
+        if unidad.strip() == "":
+            raise ValueError(
+                "La unidad no puede estar vacía."
+            )
+
+        if cantidad < 0:
+            raise ValueError(
+                "La cantidad inicial no puede ser negativa."
+            )
+
+        if cantidad_minima < 0:
+            raise ValueError(
+                "La cantidad mínima no puede ser negativa."
+            )
+
+        insumo = agregar_insumo({
+            "nombre": nombre,
+            "unidad": unidad,
+            "cantidad": cantidad,
+            "cantidad_minima": cantidad_minima
+        })
+
+        print(
+            f"\nInsumo '{insumo['nombre']}' agregado "
+            f"con ID {insumo['id_insumo']}."
+        )
+
+    except ValueError as e:
+        print(f"Error: {e}")
+
+    except Exception as e:
+        print(f"Error inesperado: {e}")
+        print(f"Tipo de excepción: {type(e).__name__}")
+
+    finally:
+        print("Operación finalizada.")

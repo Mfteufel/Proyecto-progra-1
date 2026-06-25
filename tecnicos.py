@@ -142,37 +142,57 @@ def eliminar_tecnico(id_tecnico):
 
 def menu_tecnicos():
     while True:
-        print("\n=== TÉCNICOS ===")
-        print("1. Listar todos los técnicos")
-        print("2. Ver disponibles")
-        print("3. Filtrar por especialidad")
-        print("4. Buscar técnico por ID")
-        print("5. Cambiar estado (disponible / ocupado)")
-        print("6. Agregar técnico")
-        print("7. Eliminar técnico")
-        print("0. Volver al menú principal")
+        try:
+            print("\n=== TÉCNICOS ===")
+            print("1. Listar todos los técnicos")
+            print("2. Ver disponibles")
+            print("3. Filtrar por especialidad")
+            print("4. Buscar técnico por ID")
+            print("5. Cambiar estado (disponible / ocupado)")
+            print("6. Agregar técnico")
+            print("7. Eliminar técnico")
+            print("0. Volver al menú principal")
 
-        opcion = input("\nElegí una opción: ").strip()
+            opcion = input("\nElegí una opción: ").strip()
 
-        if opcion == "1":
-            _listar_tecnicos()
-        elif opcion == "2":
-            _listar_disponibles()
-        elif opcion == "3":
-            _filtrar_por_especialidad()
-        elif opcion == "4":
-            _buscar_tecnico()
-        elif opcion == "5":
-            _cambiar_estado_tecnico()
-        elif opcion == "6":
-            _agregar_tecnico()
-        elif opcion == "7":
-            _eliminar_tecnico()
-        elif opcion == "0":
-            break
-        else:
-            print("Opción inválida, elegí una de las que aparecen en el menú.")
+            if opcion == "1":
+                _listar_tecnicos()
 
+            elif opcion == "2":
+                _listar_disponibles()
+
+            elif opcion == "3":
+                _filtrar_por_especialidad()
+
+            elif opcion == "4":
+                _buscar_tecnico()
+
+            elif opcion == "5":
+                _cambiar_estado_tecnico()
+
+            elif opcion == "6":
+                _agregar_tecnico()
+
+            elif opcion == "7":
+                _eliminar_tecnico()
+
+            elif opcion == "0":
+                break
+
+            else:
+                raise ValueError(
+                    "Opción inválida. Elegí una de las opciones del menú."
+                )
+
+        except ValueError as e:
+            print(f"Error: {e}")
+
+        except Exception as e:
+            print(f"Error inesperado: {e}")
+            print(f"Tipo de excepción: {type(e).__name__}")
+
+        finally:
+            print("Volviendo al menú de técnicos...")
 
 def _listar_tecnicos():
     print("\n--- Técnicos registrados ---")
@@ -207,17 +227,26 @@ def _filtrar_por_especialidad():
 
 
 def _buscar_tecnico():
-    print("\n--- Buscar técnico ---")
-    id_tecnico = pedir_entero("ID del técnico: ")
-    tecnico = buscar_tecnico_por_id(id_tecnico)
-    if tecnico is None:
-        print(f"No existe un técnico con ID {id_tecnico}.")
-    else:
-        print(f"\n  ID:           {tecnico['id_tecnico']}")
-        print(f"  Nombre:       {tecnico['nombre']}")
-        print(f"  Especialidad: {tecnico['especialidad']}")
-        print(f"  Estado:       {tecnico['estado']}")
+    try:
+        print("\n--- Buscar técnico ---")
 
+        id_tecnico = pedir_entero("ID del técnico: ")
+
+        tecnico = buscar_tecnico_por_id(id_tecnico)
+
+        print(f"\nID: {tecnico['id_tecnico']}")
+        print(f"Nombre: {tecnico['nombre']}")
+        print(f"Especialidad: {tecnico['especialidad']}")
+        print(f"Estado: {tecnico['estado']}")
+
+    except ValueError as e:
+        print(f"Error: {e}")
+
+    except Exception as e:
+        print(f"Error inesperado: {e}")
+
+    finally:
+        print("Consulta finalizada.")
 
 def _cambiar_estado_tecnico():
     print("\n--- Cambiar estado de técnico ---")

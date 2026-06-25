@@ -7,7 +7,7 @@ generación de IDs y búsqueda por ID. Todos los módulos importan desde acá.
 
 import json
 import os
-
+import re
 # ── Rutas de archivos ──────────────────────────────────────────────────────────
 # Anclar al directorio donde está utils.py para que funcione desde cualquier lugar.
 
@@ -42,10 +42,16 @@ def cargar_datos(nombre_archivo):
     try:
         with open(nombre_archivo, "r", encoding="utf-8") as f:
             return json.load(f)
+
     except FileNotFoundError:
-        return []
+        raise FileNotFoundError(
+            f"No se encontró el archivo: {nombre_archivo}"
+        )
+
     except json.JSONDecodeError:
-        return []
+        raise ValueError(
+            f"El archivo {nombre_archivo} está corrupto."
+        )
 
 
 def guardar_datos(nombre_archivo, lista):
@@ -55,11 +61,19 @@ def guardar_datos(nombre_archivo, lista):
     Recibe: nombre_archivo (str), lista (list de dicts).
     Devuelve: None. Crea la carpeta 'datos/' si no existe.
     """
-    carpeta = os.path.dirname(nombre_archivo)
-    if carpeta and not os.path.exists(carpeta):
-        os.makedirs(carpeta)
-    with open(nombre_archivo, "w", encoding="utf-8") as f:
-        json.dump(lista, f, ensure_ascii=False, indent=2)
+    try:
+        carpeta = os.path.dirname(nombre_archivo)
+
+        if carpeta and not os.path.exists(carpeta):
+            os.makedirs(carpeta)
+
+        with open(nombre_archivo, "w", encoding="utf-8") as f:
+            json.dump(lista, f, ensure_ascii=False, indent=2)
+
+    except Exception as e:
+        raise Exception(
+            f"Error al guardar datos: {e}"
+        )
 
 
 def generar_id(lista, nombre_id):
@@ -92,19 +106,27 @@ def buscar_por_id(lista, nombre_id, valor):
 def pedir_texto(mensaje):
     """Pide un string no vacío, repite hasta que el usuario ingrese algo."""
     while True:
-        valor = input(mensaje).strip()
-        if valor:
-            return valor
-        print("  Este campo no puede estar vacío. Intentá de nuevo.")
+        try:
+            valor = input(mensaje).strip()
 
+            if not valor:
+                raise ValueError(
+                    "Este campo no puede estar vacío."
+                )
+
+            return valor
+
+        except ValueError as e:
+            print(f"Error: {e}")
 
 def pedir_entero(mensaje):
     """Pide un número entero, repite si el usuario ingresa algo inválido."""
     while True:
         try:
             return int(input(mensaje).strip())
+
         except ValueError:
-            print("  Tenés que ingresar un número entero.")
+            print("Tenés que ingresar un número entero.")
 
 
 def pedir_opcion(mensaje, opciones):
@@ -116,20 +138,39 @@ def pedir_opcion(mensaje, opciones):
     """
     for i, op in enumerate(opciones, 1):
         print(f"  {i}. {op}")
+
     while True:
         try:
             eleccion = int(input(mensaje).strip())
-            if 1 <= eleccion <= len(opciones):
-                return opciones[eleccion - 1]
-            print(f"  Elegí un número entre 1 y {len(opciones)}.")
-        except ValueError:
-            print("  Tenés que ingresar un número.")
+
+            if not 1 <= eleccion <= len(opciones):
+                raise ValueError(
+                    f"Elegí un número entre 1 y {len(opciones)}."
+                )
+
+            return opciones[eleccion - 1]
+
+        except ValueError as e:
+            print(f"Error: {e}")
 
 
 def pedir_confirmacion(mensaje):
     """Pide s/n y devuelve True si el usuario confirma."""
     while True:
-        respuesta = input(mensaje + " (s/n): ").strip().lower()
-        if respuesta in ("s", "n"):
+        try:
+            respuesta = input(
+                mensaje + " (s/n): "
+            ).strip().lower()
+
+            if respuesta not in ("s", "n"):
+                raise ValueError(
+                    "Ingresá 's' para sí o 'n' para no."
+                )
+
             return respuesta == "s"
-        print("  Ingresá 's' para sí o 'n' para no.")
+
+        except ValueError as e:
+            print(f"Error: {e}")
+            
+def validar_telefono(telefono):
+    return bool(re.fullmatch(r"\d{8,15}", telefono))
