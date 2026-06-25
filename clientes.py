@@ -8,11 +8,11 @@ Menú:              menu_clientes.
 
 from utils import (
     cargar_datos, guardar_datos, generar_id, buscar_por_id,
-    pedir_texto, pedir_entero, pedir_opcion, pedir_confirmacion,
+    pedir_texto, pedir_entero, validar_telefono, pedir_opcion, pedir_confirmacion,
     ARCHIVO_CLIENTES, ARCHIVO_PEDIDOS, TIPOS_CLIENTE
 )
 
-from utils import validar_telefono
+
 
 # ── Funciones de datos ────────────────────────────────────────────────────────
 
