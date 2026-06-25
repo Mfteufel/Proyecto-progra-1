@@ -7,11 +7,9 @@ Funciones de datos: crear_pedido, listar_pedidos, listar_pedidos_por_estado,
 Menú:              menu_pedidos.
 """
 
-from datetime import date
-
 from utils import (
     cargar_datos, guardar_datos, generar_id, buscar_por_id,
-    pedir_texto, pedir_entero, pedir_opcion, pedir_confirmacion,
+    pedir_texto, pedir_entero, pedir_opcion, pedir_confirmacion, pedir_fecha,
     ARCHIVO_PEDIDOS, ARCHIVO_CLIENTES, ARCHIVO_TECNICOS,
     ARCHIVO_COBROS, ARCHIVO_REPUESTOS,
     ESTADOS_PEDIDO
@@ -95,6 +93,17 @@ def listar_pedidos_por_tecnico(id_tecnico):
     return list(filter(lambda p: p["id_tecnico"] == id_tecnico, pedidos))
 
 
+def buscar_pedido_por_id(id_pedido):
+    """
+    Busca un pedido por su ID.
+
+    Recibe: id_pedido (int).
+    Devuelve: el dict del pedido, o None si no existe.
+    """
+    pedidos = cargar_datos(ARCHIVO_PEDIDOS)
+    return buscar_por_id(pedidos, "id_pedido", id_pedido)
+
+
 def asignar_tecnico(id_pedido, id_tecnico):
     """
     Asigna o reasigna un técnico a un pedido. Funciona en cualquier estado.
@@ -157,6 +166,25 @@ def cambiar_estado_pedido(id_pedido, nuevo_estado):
     return pedido
 
 
+def modificar_pedido(id_pedido, nuevos_datos):
+    """
+    Actualiza la descripción, urgencia o precio de un pedido existente.
+
+    Recibe: id_pedido (int), nuevos_datos (dict) con los campos a modificar.
+    Devuelve: el dict actualizado, o None si el pedido no existe.
+    """
+    pedidos = cargar_datos(ARCHIVO_PEDIDOS)
+    pedido = buscar_por_id(pedidos, "id_pedido", id_pedido)
+
+    if pedido is None:
+        print(f"No existe un pedido con ID {id_pedido}.")
+        return None
+
+    pedido.update(nuevos_datos)
+    guardar_datos(ARCHIVO_PEDIDOS, pedidos)
+    return pedido
+
+
 def eliminar_pedido(id_pedido):
     """
     Elimina un pedido si no tiene cobros ni repuestos asociados.
@@ -192,7 +220,16 @@ def menu_pedidos():
     while True:
         try:
             print("\n=== PEDIDOS ===")
-            ...
+            print("1. Listar todos los pedidos")
+            print("2. Filtrar por estado")
+            print("3. Pedidos por cliente")
+            print("4. Pedidos por técnico")
+            print("5. Cargar pedido nuevo")
+            print("6. Asignar / cambiar técnico")
+            print("7. Cambiar estado")
+            print("8. Modificar pedido")
+            print("9. Eliminar pedido")
+            print("0. Volver al menú principal")
             opcion = input("\nElegí una opción: ").strip()
 
             if opcion == "1":
@@ -210,6 +247,8 @@ def menu_pedidos():
             elif opcion == "7":
                 _cambiar_estado()
             elif opcion == "8":
+                _modificar_pedido()
+            elif opcion == "9":
                 _eliminar_pedido()
             elif opcion == "0":
                 break
@@ -289,7 +328,7 @@ def _cargar_pedido():
             raise ValueError("La descripción no puede estar vacía.")
 
         urgente = pedir_confirmacion("¿Es urgente?")
-        fecha = date.today().strftime("%d/%m/%Y")
+        fecha = pedir_fecha("Fecha del pedido (DD/MM/AAAA): ")
 
         pedido = crear_pedido({
             "id_cliente": id_cliente,
@@ -345,6 +384,32 @@ def _cambiar_estado():
 
     cambiar_estado_pedido(id_pedido, siguiente)
     print(f"Pedido #{id_pedido} avanzado a '{siguiente}'.")
+
+
+def _modificar_pedido():
+    print("\n--- Modificar pedido ---")
+    id_pedido = pedir_entero("ID del pedido a modificar: ")
+    pedido = buscar_pedido_por_id(id_pedido)
+    if pedido is None:
+        print(f"No existe un pedido con ID {id_pedido}.")
+        return
+
+    print(f"Modificando pedido #{id_pedido}. Dejá vacío para no cambiar el campo.")
+
+    nuevos = {}
+    descripcion = input(f"Descripción [{pedido['descripcion']}]: ").strip()
+    if descripcion:
+        nuevos["descripcion"] = descripcion
+
+    if pedir_confirmacion(f"¿Cambiar urgencia? (actual: {'sí' if pedido['urgente'] else 'no'})"):
+        nuevos["urgente"] = pedir_confirmacion("¿Es urgente?")
+
+    if not nuevos:
+        print("No cambiaste nada.")
+        return
+
+    modificar_pedido(id_pedido, nuevos)
+    print(f"Pedido #{id_pedido} actualizado.")
 
 
 def _eliminar_pedido():

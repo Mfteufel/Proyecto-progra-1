@@ -48,6 +48,27 @@ def registrar_repuesto(datos):
     return repuesto
 
 
+def listar_repuestos():
+    """
+    Devuelve todos los repuestos registrados.
+
+    Recibe: nada.
+    Devuelve: lista de dicts; [] si no hay repuestos.
+    """
+    return cargar_datos(ARCHIVO_REPUESTOS)
+
+
+def buscar_repuesto_por_id(id_repuesto):
+    """
+    Busca un repuesto por su ID.
+
+    Recibe: id_repuesto (int).
+    Devuelve: el dict del repuesto, o None si no existe.
+    """
+    repuestos = cargar_datos(ARCHIVO_REPUESTOS)
+    return buscar_por_id(repuestos, "id_repuesto", id_repuesto)
+
+
 def listar_repuestos_por_pedido(id_pedido):
     """
     Devuelve todos los repuestos de un pedido.

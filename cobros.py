@@ -6,9 +6,11 @@ Funciones de datos: registrar_cobro, listar_cobros_por_pedido,
 Menú:              menu_cobros.
 """
 
+from functools import reduce
+
 from utils import (
     cargar_datos, guardar_datos, generar_id, buscar_por_id,
-    pedir_texto, pedir_entero, pedir_opcion, pedir_confirmacion,
+    pedir_texto, pedir_entero, pedir_opcion, pedir_confirmacion, pedir_fecha,
     ARCHIVO_COBROS, ARCHIVO_PEDIDOS, ARCHIVO_CLIENTES,
     FORMAS_PAGO, ESTADOS_COBRO
 )
@@ -55,6 +57,16 @@ def registrar_cobro(datos):
     return cobro
 
 
+def listar_cobros():
+    """
+    Devuelve todos los cobros registrados.
+
+    Recibe: nada.
+    Devuelve: lista de dicts; [] si no hay cobros.
+    """
+    return cargar_datos(ARCHIVO_COBROS)
+
+
 def listar_cobros_por_pedido(id_pedido):
     """
     Devuelve todos los cobros de un pedido.
@@ -74,8 +86,10 @@ def calcular_deuda_pedido(id_pedido):
     Devuelve: float con el total adeudado.
     """
     cobros = listar_cobros_por_pedido(id_pedido)
-    pendientes = filter(lambda c: c["estado"] == "pendiente", cobros)
-    return sum(map(lambda c: c["monto"], pendientes))
+    pendientes = list(filter(lambda c: c["estado"] == "pendiente", cobros))
+    if not pendientes:
+        return 0
+    return reduce(lambda acum, c: acum + c["monto"], pendientes, 0)
 
 
 def listar_deudores():
@@ -107,6 +121,17 @@ def listar_deudores():
         resultado.append({"id_cliente": id_cliente, "nombre": nombre, "deuda_total": deuda})
 
     return resultado
+
+
+def buscar_cobro_por_id(id_cobro):
+    """
+    Busca un cobro por su ID.
+
+    Recibe: id_cobro (int).
+    Devuelve: el dict del cobro, o None si no existe.
+    """
+    cobros = cargar_datos(ARCHIVO_COBROS)
+    return buscar_por_id(cobros, "id_cobro", id_cobro)
 
 
 def marcar_pago(id_cobro):
@@ -206,8 +231,6 @@ def _ver_cobros_pedido():
 
 
 def _registrar_cobro():
-    from datetime import date
-
     try:
         print("\n--- Registrar cobro ---")
 
@@ -281,7 +304,7 @@ def _registrar_cobro():
 
         recibido_por = pedir_texto("Recibido por: ")
 
-        fecha = date.today().strftime("%d/%m/%Y")
+        fecha = pedir_fecha("Fecha del cobro (DD/MM/AAAA): ")
 
         cobro = registrar_cobro({
             "id_pedido": id_pedido,
@@ -311,15 +334,8 @@ def _marcar_pago():
     print("\n--- Marcar cobro como pagado ---")
     id_cobro = pedir_entero("ID del cobro: ")
     cobro = marcar_pago(id_cobro)
-    if cobro is None:
-        raise ValueError(
-            f"No existe un cobro con ID {id_cobro}."
-        )
-
-    if cobro["estado"] == "pagado":
-        raise ValueError(
-            f"El cobro {id_cobro} ya estaba marcado como pagado."
-        )
+    if cobro is not None:
+        print(f"Cobro #{id_cobro} marcado como pagado.")
 
 def _ver_deuda_pedido():
     print("\n--- Deuda de un pedido ---")

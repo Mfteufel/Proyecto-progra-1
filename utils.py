@@ -174,6 +174,16 @@ def pedir_confirmacion(mensaje):
             print(f"Error: {e}")
 
 
+def pedir_fecha(mensaje):
+    """Pide una fecha en formato DD/MM/AAAA y la valida con regex."""
+    patron = re.compile(r"^\d{2}/\d{2}/\d{4}$")
+    while True:
+        valor = input(mensaje).strip()
+        if patron.match(valor):
+            return valor
+        print("Formato inválido. Ingresá la fecha como DD/MM/AAAA (ej: 25/06/2026).")
+
+
 def validar_telefono(telefono):
     """
     Valida que el teléfono tenga entre 8 y 15 dígitos.

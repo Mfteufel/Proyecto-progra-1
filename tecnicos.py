@@ -91,6 +91,29 @@ def buscar_tecnico_por_id(id_tecnico):
     return buscar_por_id(tecnicos, "id_tecnico", id_tecnico)
 
 
+def modificar_tecnico(id_tecnico, nuevos_datos):
+    """
+    Actualiza el nombre o la especialidad de un técnico existente.
+
+    Recibe: id_tecnico (int), nuevos_datos (dict) con los campos a modificar.
+    Devuelve: el dict actualizado, o None si el técnico no existe o la especialidad es inválida.
+    """
+    tecnicos = cargar_datos(ARCHIVO_TECNICOS)
+    tecnico = buscar_por_id(tecnicos, "id_tecnico", id_tecnico)
+
+    if tecnico is None:
+        print(f"No existe un técnico con ID {id_tecnico}.")
+        return None
+
+    if "especialidad" in nuevos_datos and nuevos_datos["especialidad"] not in ESPECIALIDADES:
+        print(f"Especialidad inválida. Debe ser una de: {ESPECIALIDADES}")
+        return None
+
+    tecnico.update(nuevos_datos)
+    guardar_datos(ARCHIVO_TECNICOS, tecnicos)
+    return tecnico
+
+
 def cambiar_estado_tecnico(id_tecnico, nuevo_estado):
     """
     Cambia el estado de un técnico (disponible / ocupado).
@@ -150,7 +173,8 @@ def menu_tecnicos():
             print("4. Buscar técnico por ID")
             print("5. Cambiar estado (disponible / ocupado)")
             print("6. Agregar técnico")
-            print("7. Eliminar técnico")
+            print("7. Modificar técnico")
+            print("8. Eliminar técnico")
             print("0. Volver al menú principal")
 
             opcion = input("\nElegí una opción: ").strip()
@@ -174,6 +198,9 @@ def menu_tecnicos():
                 _agregar_tecnico()
 
             elif opcion == "7":
+                _modificar_tecnico()
+
+            elif opcion == "8":
                 _eliminar_tecnico()
 
             elif opcion == "0":
@@ -231,16 +258,16 @@ def _buscar_tecnico():
         print("\n--- Buscar técnico ---")
 
         id_tecnico = pedir_entero("ID del técnico: ")
-
         tecnico = buscar_tecnico_por_id(id_tecnico)
 
-        print(f"\nID: {tecnico['id_tecnico']}")
-        print(f"Nombre: {tecnico['nombre']}")
-        print(f"Especialidad: {tecnico['especialidad']}")
-        print(f"Estado: {tecnico['estado']}")
+        if tecnico is None:
+            print(f"No existe un técnico con ID {id_tecnico}.")
+            return
 
-    except ValueError as e:
-        print(f"Error: {e}")
+        print(f"\nID:           {tecnico['id_tecnico']}")
+        print(f"Nombre:       {tecnico['nombre']}")
+        print(f"Especialidad: {tecnico['especialidad']}")
+        print(f"Estado:       {tecnico['estado']}")
 
     except Exception as e:
         print(f"Error inesperado: {e}")
@@ -270,6 +297,33 @@ def _agregar_tecnico():
     tecnico = crear_tecnico({"nombre": nombre, "especialidad": especialidad})
     if tecnico:
         print(f"\nTécnico '{tecnico['nombre']}' agregado con ID {tecnico['id_tecnico']}.")
+
+
+def _modificar_tecnico():
+    print("\n--- Modificar técnico ---")
+    id_tecnico = pedir_entero("ID del técnico a modificar: ")
+    tecnico = buscar_tecnico_por_id(id_tecnico)
+    if tecnico is None:
+        print(f"No existe un técnico con ID {id_tecnico}.")
+        return
+
+    print(f"Modificando a '{tecnico['nombre']}'. Dejá vacío para no cambiar el campo.")
+
+    nuevos = {}
+    nombre = input(f"Nombre [{tecnico['nombre']}]: ").strip()
+    if nombre:
+        nuevos["nombre"] = nombre
+
+    if pedir_confirmacion(f"¿Querés cambiar la especialidad? (actual: {tecnico['especialidad']})"):
+        print("Especialidad:")
+        nuevos["especialidad"] = pedir_opcion("Elegí la especialidad: ", ESPECIALIDADES)
+
+    if not nuevos:
+        print("No cambiaste nada.")
+        return
+
+    modificar_tecnico(id_tecnico, nuevos)
+    print("Técnico actualizado.")
 
 
 def _eliminar_tecnico():

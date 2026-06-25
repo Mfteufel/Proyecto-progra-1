@@ -2,6 +2,8 @@
 
 Sistema de gestión por consola para una empresa de servicios técnicos (aires acondicionados, electricidad y mantenimiento general). Proyecto final de Programación I — UADE.
 
+**Integrantes:** Marco Teufel, Santino Amadey, Fabrizio Ruarte, Catherine Alcaraz
+
 ---
 
 ## ¿Qué hace el sistema?
@@ -13,7 +15,7 @@ Permite a Oli (el dueño) gestionar:
 - **Cobros** — registro de pagos, cuotas, deudores y avance automático a "cobrado"
 - **Repuestos** — piezas pedidas para cada trabajo (especiales o del estante)
 - **Stock del estante** — insumos comunes con alerta de reposición; al usar un insumo se descuenta del estante y se suma al pedido automáticamente
-- **Historial** — consulta de todo lo relacionado a un cliente (próximamente)
+- **Historial** — consulta de todo lo relacionado a un cliente y búsqueda de trabajos por garantía
 
 ---
 
@@ -37,7 +39,9 @@ sistema_oli/
 │   ├── repuestos.json
 │   └── stock.json
 ├── tests/
-│   └── test_utils.py ← tests de las funciones base
+│   ├── test_utils.py     ← tests de las funciones base
+│   ├── test_clientes.py  ← tests de alta, baja, modificación y búsqueda de clientes
+│   └── test_pedidos.py   ← tests de creación, estados, filtros y eliminación de pedidos
 └── README.md         ← este archivo
 ```
 
@@ -60,7 +64,7 @@ Aparece el menú principal:
 2. Técnicos
 3. Pedidos
 4. Cobros
-5. Historial       (próximamente)
+5. Historial
 6. Repuestos
 7. Stock del estante
 0. Salir
@@ -74,7 +78,11 @@ Desde la carpeta `sistema_oli/`:
 
 ```bash
 python3 tests/test_utils.py
+python3 tests/test_clientes.py
+python3 tests/test_pedidos.py
 ```
+
+Cada suite restaura los archivos `.json` al estado original al terminar, así que se pueden correr en cualquier orden sin afectar los datos.
 
 ---
 
@@ -91,9 +99,9 @@ python3 tests/test_utils.py
 | `repuestos.py` | ✅ Completo | Repuestos por pedido. Carga manual para piezas especiales; las del estante entran vía `stock.usar_insumo()`. Avance de estado lineal. |
 | `stock.py` | ✅ Completo | Estante de insumos comunes. `usar_insumo()` descuenta del estante y registra el repuesto en el pedido en un solo paso. Alerta automática cuando un insumo llega al mínimo. |
 | `main.py` | ✅ Completo | Menú principal. Solo importa y llama a los menús de cada módulo. |
-| `historial.py` | ❌ Pendiente | Consulta del historial por cliente: todos sus pedidos, cobros y repuestos. Incluye búsqueda de garantías. |
-| `tests/test_clientes.py` | ❌ Pendiente | Tests de integridad de clientes. |
-| `tests/test_pedidos.py` | ❌ Pendiente | Tests de integridad de pedidos. |
+| `historial.py` | ✅ Completo | Consulta del historial por cliente: todos sus pedidos, cobros y repuestos. Incluye búsqueda de trabajos por garantía (regex, sin distinguir mayúsculas). |
+| `tests/test_clientes.py` | ✅ Completo | 9 tests: crear, buscar, modificar y eliminar clientes. Valida integridad referencial. |
+| `tests/test_pedidos.py` | ✅ Completo | 9 tests: crear, filtrar, cambiar estado y eliminar pedidos. Valida secuencia lineal de estados. |
 
 ---
 
@@ -216,10 +224,34 @@ Cuando Oli vuelve del mayorista usa **Stock → Reponer stock** para sumar la ca
 ## Reglas del proyecto (restricciones del profesor)
 
 - Sin clases — solo funciones
-- Sin librerías externas — solo biblioteca estándar de Python (`json`, `os`, `datetime`)
+- Sin librerías externas — solo biblioteca estándar de Python
 - IDs autoincrementales generados por el sistema
 - Datos persistidos en archivos `.json`
+- Uso obligatorio de: `lambda`, `map`, `filter`, `functools.reduce`, recursividad, excepciones, expresiones regulares
 
+---
+
+## Librerías utilizadas
+
+No se requiere instalar nada. Todo es biblioteca estándar de Python 3:
+
+| Librería | Uso |
+|---|---|
+| `json` | Leer y escribir archivos `.json` |
+| `os` | Rutas de archivos, crear carpeta `datos/` si no existe |
+| `re` | Validación de teléfonos y fechas; búsqueda de garantías en historial |
+| `functools` | `reduce` para acumular deuda de cobros pendientes |
+
+---
+
+## Limitaciones conocidas
+
+- **Sin autenticación:** cualquier persona que ejecute el sistema tiene acceso total. No hay usuarios ni contraseñas.
+- **Un solo proceso a la vez:** los `.json` se leen y escriben en cada operación. Si dos personas abren el sistema al mismo tiempo pueden pisarse los datos.
+- **Sin paginación:** si hay muchos clientes o pedidos, se listan todos juntos en consola.
+- **IDs no se reutilizan:** si se elimina un cliente con ID 5, el próximo cliente creado recibe el ID siguiente al máximo actual, no el 5.
+- **Fechas sin validación de formato:** el sistema guarda la fecha del día automáticamente; si se carga una fecha manual (por ejemplo en tests), no se valida el formato `DD/MM/AAAA`.
+- **Sin backup automático:** si un archivo `.json` se corrompe manualmente, el sistema lanza un error. No hay recuperación automática.
 
 ---
 

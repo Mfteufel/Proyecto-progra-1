@@ -6,6 +6,8 @@ Funciones de datos: crear_cliente, listar_clientes, buscar_cliente_por_id,
 Menú:              menu_clientes.
 """
 
+import re
+
 from utils import (
     cargar_datos, guardar_datos, generar_id, buscar_por_id,
     pedir_texto, pedir_entero, validar_telefono, pedir_opcion, pedir_confirmacion,
@@ -65,6 +67,18 @@ def buscar_cliente_por_id(id_cliente):
     """
     clientes = cargar_datos(ARCHIVO_CLIENTES)
     return buscar_por_id(clientes, "id_cliente", id_cliente)
+
+
+def buscar_clientes_por_nombre(nombre):
+    """
+    Busca clientes cuyo nombre contenga el texto dado (sin distinguir mayúsculas).
+
+    Recibe: nombre (str) — texto parcial o completo a buscar.
+    Devuelve: lista de dicts con los clientes que coinciden; [] si no hay resultados.
+    """
+    clientes = cargar_datos(ARCHIVO_CLIENTES)
+    patron = re.compile(nombre, re.IGNORECASE)
+    return list(filter(lambda c: patron.search(c["nombre"]), clientes))
 
 
 def modificar_cliente(id_cliente, nuevos_datos):
@@ -127,8 +141,9 @@ def menu_clientes():
             print("1. Cargar cliente nuevo")
             print("2. Listar todos los clientes")
             print("3. Buscar cliente por ID")
-            print("4. Modificar cliente")
-            print("5. Eliminar cliente")
+            print("4. Buscar cliente por nombre")
+            print("5. Modificar cliente")
+            print("6. Eliminar cliente")
             print("0. Volver al menú principal")
 
             opcion = input("\nElegí una opción: ").strip()
@@ -143,9 +158,12 @@ def menu_clientes():
                 _buscar_cliente()
 
             elif opcion == "4":
-                _modificar_cliente()
+                _buscar_cliente_por_nombre()
 
             elif opcion == "5":
+                _modificar_cliente()
+
+            elif opcion == "6":
                 _eliminar_cliente()
 
             elif opcion == "0":
@@ -225,6 +243,18 @@ def _buscar_cliente():
         print(f"  Dirección: {cliente['direccion']}")
         print(f"  Teléfono:  {cliente['telefono']}")
         print(f"  Tipo:      {cliente['tipo']}")
+
+
+def _buscar_cliente_por_nombre():
+    print("\n--- Buscar cliente por nombre ---")
+    nombre = pedir_texto("Nombre (o parte del nombre): ")
+    resultados = buscar_clientes_por_nombre(nombre)
+    if not resultados:
+        print(f"No se encontraron clientes con '{nombre}'.")
+        return
+    print(f"\n{len(resultados)} resultado(s):")
+    for c in resultados:
+        print(f"  [ID {c['id_cliente']}] {c['nombre']} — {c['direccion']} — Tel: {c['telefono']} — {c['tipo']}")
 
 
 def _modificar_cliente():
