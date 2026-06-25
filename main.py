@@ -45,7 +45,7 @@ def main():
                 menu_cobros()
 
             elif opcion == "5":
-                print("Ese módulo todavía no está disponible.")
+                menu_historial()
 
             elif opcion == "6":
                 menu_repuestos()

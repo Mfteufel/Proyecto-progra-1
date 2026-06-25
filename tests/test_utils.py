@@ -63,9 +63,12 @@ def test_buscar_por_id_no_consecutivo():
 # ── Tests de cargar_datos / guardar_datos ─────────────────────────────────────
 
 def test_cargar_archivo_inexistente():
-    resultado = cargar_datos("datos/archivo_que_no_existe.json")
-    assert resultado == [], f"Esperaba [], obtuve {resultado}"
-    print("✓ cargar_datos: archivo inexistente devuelve []")
+    try:
+        cargar_datos("datos/archivo_que_no_existe.json")
+        assert False, "Debería haber lanzado FileNotFoundError"
+    except FileNotFoundError:
+        pass
+    print("✓ cargar_datos: archivo inexistente lanza FileNotFoundError")
 
 
 def test_guardar_y_cargar_preserva_datos():
@@ -78,13 +81,18 @@ def test_guardar_y_cargar_preserva_datos():
 
 
 def test_cargar_archivo_corrupto():
-    os.makedirs("datos", exist_ok=True)
+    os.makedirs(os.path.join(_BASE, "datos"), exist_ok=True)
     with open(ARCHIVO_TEMP, "w", encoding="utf-8") as f:
         f.write("esto no es json {{{")
-    resultado = cargar_datos(ARCHIVO_TEMP)
-    os.remove(ARCHIVO_TEMP)
-    assert resultado == [], f"Esperaba [], obtuve {resultado}"
-    print("✓ cargar_datos: archivo corrupto devuelve []")
+    try:
+        cargar_datos(ARCHIVO_TEMP)
+        assert False, "Debería haber lanzado ValueError"
+    except ValueError:
+        pass
+    finally:
+        if os.path.exists(ARCHIVO_TEMP):
+            os.remove(ARCHIVO_TEMP)
+    print("✓ cargar_datos: archivo corrupto lanza ValueError")
 
 
 # ── Runner ────────────────────────────────────────────────────────────────────
