@@ -173,4 +173,8 @@ def pedir_confirmacion(mensaje):
             print(f"Error: {e}")
             
 def validar_telefono(telefono):
-    return bool(re.fullmatch(r"\d{8,15}", telefono))
+    """
+    Valida que el teléfono tenga entre 8 y 15 dígitos.
+    """
+    patron = r"\d{8,15}"
+    return bool(re.fullmatch(patron, telefono))

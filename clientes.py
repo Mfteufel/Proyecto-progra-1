@@ -237,9 +237,16 @@ def _modificar_cliente():
     if direccion:
         nuevos["direccion"] = direccion
 
-    telefono = input(f"Teléfono [{cliente['telefono']}]: ").strip()
-    if telefono:
-        nuevos["telefono"] = telefono
+    while True:
+        telefono = input(f"Teléfono [{cliente['telefono']}]: ").strip()
+        if telefono == "":
+            break
+
+        if validar_telefono(telefono):
+            nuevos["telefono"] = telefono
+            break
+
+        print("Teléfono inválido. Debe contener entre 8 y 15 dígitos.")
 
     if pedir_confirmacion(f"¿Querés cambiar el tipo? (actual: {cliente['tipo']})"):
         print("Tipo de cliente:")
