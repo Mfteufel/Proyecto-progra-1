@@ -12,6 +12,7 @@ from utils import (
     ARCHIVO_CLIENTES, ARCHIVO_PEDIDOS, TIPOS_CLIENTE
 )
 
+from utils import validar_telefono
 
 # ── Funciones de datos ────────────────────────────────────────────────────────
 
@@ -162,7 +163,12 @@ def _cargar_cliente():
 
         nombre = pedir_texto("Nombre del cliente: ")
         direccion = pedir_texto("Dirección: ")
-        telefono = pedir_texto("Teléfono: ")
+        
+        while True:
+            telefono = pedir_texto("Teléfono: ")
+            if validar_telefono(telefono):
+                break
+            print("Teléfono inválido. Debe contener entre 8 y 15 dígitos.")
 
         print("Tipo de cliente:")
         tipo = pedir_opcion("Elegí el tipo: ", TIPOS_CLIENTE)

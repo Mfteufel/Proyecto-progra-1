@@ -7,7 +7,7 @@ generación de IDs y búsqueda por ID. Todos los módulos importan desde acá.
 
 import json
 import os
-
+import re
 # ── Rutas de archivos ──────────────────────────────────────────────────────────
 # Anclar al directorio donde está utils.py para que funcione desde cualquier lugar.
 
@@ -171,3 +171,6 @@ def pedir_confirmacion(mensaje):
 
         except ValueError as e:
             print(f"Error: {e}")
+            
+def validar_telefono(telefono):
+    return bool(re.fullmatch(r"\d{8,15}", telefono))
