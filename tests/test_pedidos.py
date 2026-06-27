@@ -9,6 +9,7 @@ se restauran, de modo que los archivos .json quedan igual que al principio.
 
 import os
 import sys
+import pytest
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
@@ -41,9 +42,10 @@ def _restore(clientes, pedidos, cobros, repuestos):
     guardar_datos(ARCHIVO_REPUESTOS, repuestos)
 
 
-def _cliente_test(clientes):
+def _cliente_test():
     """Inserta un cliente de prueba y devuelve su id_cliente."""
     from utils import generar_id
+    clientes = cargar_datos(ARCHIVO_CLIENTES)
     id_nuevo = generar_id(clientes, "id_cliente")
     clientes.append({
         "id_cliente": id_nuevo,
@@ -61,7 +63,7 @@ def _cliente_test(clientes):
 def test_crear_pedido_cliente_valido():
     clientes, pedidos, cobros, repuestos = _backup()
     try:
-        id_cliente = _cliente_test(clientes)
+        id_cliente = _cliente_test()
         total_antes = len(cargar_datos(ARCHIVO_PEDIDOS))
         pedido = crear_pedido({
             "id_cliente": id_cliente,
@@ -75,7 +77,6 @@ def test_crear_pedido_cliente_valido():
         assert pedido["estado"] == "pendiente", "Estado inicial debe ser 'pendiente'"
         assert pedido["precio"] is None, "Precio inicial debe ser None"
         assert total_despues == total_antes + 1, "No se agregó el pedido a la lista"
-        print("✓ crear_pedido: pedido válido creado en estado 'pendiente'")
     finally:
         _restore(clientes, pedidos, cobros, repuestos)
 
@@ -83,17 +84,13 @@ def test_crear_pedido_cliente_valido():
 def test_crear_pedido_cliente_inexistente():
     clientes, pedidos, cobros, repuestos = _backup()
     try:
-        try:
+        with pytest.raises(ValueError):
             crear_pedido({
                 "id_cliente": 99999,
                 "descripcion": "Trabajo fantasma",
                 "urgente": False,
                 "fecha": "25/06/2026"
             })
-            assert False, "Debería haber lanzado ValueError"
-        except ValueError:
-            pass
-        print("✓ crear_pedido: cliente inexistente lanza ValueError")
     finally:
         _restore(clientes, pedidos, cobros, repuestos)
 
@@ -103,7 +100,7 @@ def test_crear_pedido_cliente_inexistente():
 def test_listar_pedidos_por_estado_valido():
     clientes, pedidos, cobros, repuestos = _backup()
     try:
-        id_cliente = _cliente_test(clientes)
+        id_cliente = _cliente_test()
         crear_pedido({
             "id_cliente": id_cliente,
             "descripcion": "Test estado pendiente",
@@ -114,7 +111,6 @@ def test_listar_pedidos_por_estado_valido():
         assert isinstance(resultado, list), "Debe devolver una lista"
         assert all(p["estado"] == "pendiente" for p in resultado), \
             "Todos deben estar en estado 'pendiente'"
-        print("✓ listar_pedidos_por_estado: filtra correctamente por estado")
     finally:
         _restore(clientes, pedidos, cobros, repuestos)
 
@@ -124,7 +120,6 @@ def test_listar_pedidos_por_estado_invalido():
     try:
         resultado = listar_pedidos_por_estado("inventado")
         assert resultado is None, "Estado inválido debe devolver None"
-        print("✓ listar_pedidos_por_estado: estado inválido devuelve None")
     finally:
         _restore(clientes, pedidos, cobros, repuestos)
 
@@ -134,7 +129,7 @@ def test_listar_pedidos_por_estado_invalido():
 def test_cambiar_estado_secuencia_correcta():
     clientes, pedidos, cobros, repuestos = _backup()
     try:
-        id_cliente = _cliente_test(clientes)
+        id_cliente = _cliente_test()
         pedido = crear_pedido({
             "id_cliente": id_cliente,
             "descripcion": "Test avance de estado",
@@ -149,7 +144,6 @@ def test_cambiar_estado_secuencia_correcta():
         # asignado → en_curso
         resultado = cambiar_estado_pedido(id_pedido, "en_curso")
         assert resultado["estado"] == "en_curso", "Estado incorrecto"
-        print("✓ cambiar_estado_pedido: avanza correctamente en la secuencia")
     finally:
         _restore(clientes, pedidos, cobros, repuestos)
 
@@ -157,7 +151,7 @@ def test_cambiar_estado_secuencia_correcta():
 def test_cambiar_estado_saltando_paso():
     clientes, pedidos, cobros, repuestos = _backup()
     try:
-        id_cliente = _cliente_test(clientes)
+        id_cliente = _cliente_test()
         pedido = crear_pedido({
             "id_cliente": id_cliente,
             "descripcion": "Test saltar estado",
@@ -167,7 +161,6 @@ def test_cambiar_estado_saltando_paso():
         # Intentar ir directo de "pendiente" a "en_curso" (saltando "asignado")
         resultado = cambiar_estado_pedido(pedido["id_pedido"], "en_curso")
         assert resultado is None, "No debería permitir saltar estados"
-        print("✓ cambiar_estado_pedido: rechaza saltar pasos en la secuencia")
     finally:
         _restore(clientes, pedidos, cobros, repuestos)
 
@@ -177,7 +170,7 @@ def test_cambiar_estado_saltando_paso():
 def test_listar_pedidos_por_cliente():
     clientes, pedidos, cobros, repuestos = _backup()
     try:
-        id_cliente = _cliente_test(clientes)
+        id_cliente = _cliente_test()
         crear_pedido({
             "id_cliente": id_cliente,
             "descripcion": "Primer trabajo",
@@ -194,7 +187,6 @@ def test_listar_pedidos_por_cliente():
         assert len(resultado) == 2, f"Esperaba 2 pedidos, obtuve {len(resultado)}"
         assert all(p["id_cliente"] == id_cliente for p in resultado), \
             "Todos los pedidos deben ser de ese cliente"
-        print("✓ listar_pedidos_por_cliente: devuelve solo pedidos del cliente")
     finally:
         _restore(clientes, pedidos, cobros, repuestos)
 
@@ -204,7 +196,7 @@ def test_listar_pedidos_por_cliente():
 def test_eliminar_pedido_sin_cobros():
     clientes, pedidos, cobros, repuestos = _backup()
     try:
-        id_cliente = _cliente_test(clientes)
+        id_cliente = _cliente_test()
         pedido = crear_pedido({
             "id_cliente": id_cliente,
             "descripcion": "Test eliminar",
@@ -216,7 +208,6 @@ def test_eliminar_pedido_sin_cobros():
         pedidos_actuales = cargar_datos(ARCHIVO_PEDIDOS)
         ids = [p["id_pedido"] for p in pedidos_actuales]
         assert pedido["id_pedido"] not in ids, "El pedido sigue en la lista"
-        print("✓ eliminar_pedido: elimina correctamente si no tiene cobros ni repuestos")
     finally:
         _restore(clientes, pedidos, cobros, repuestos)
 
@@ -224,7 +215,7 @@ def test_eliminar_pedido_sin_cobros():
 def test_eliminar_pedido_con_cobros():
     clientes, pedidos, cobros, repuestos = _backup()
     try:
-        id_cliente = _cliente_test(clientes)
+        id_cliente = _cliente_test()
         pedido = crear_pedido({
             "id_cliente": id_cliente,
             "descripcion": "Test con cobro",
@@ -246,43 +237,5 @@ def test_eliminar_pedido_con_cobros():
 
         resultado = eliminar_pedido(pedido["id_pedido"])
         assert resultado is False, "No debería poder eliminar un pedido con cobros"
-        print("✓ eliminar_pedido: bloquea eliminación si tiene cobros")
     finally:
         _restore(clientes, pedidos, cobros, repuestos)
-
-
-# ── Runner ────────────────────────────────────────────────────────────────────
-
-def ejecutar_tests():
-    tests = [
-        test_crear_pedido_cliente_valido,
-        test_crear_pedido_cliente_inexistente,
-        test_listar_pedidos_por_estado_valido,
-        test_listar_pedidos_por_estado_invalido,
-        test_cambiar_estado_secuencia_correcta,
-        test_cambiar_estado_saltando_paso,
-        test_listar_pedidos_por_cliente,
-        test_eliminar_pedido_sin_cobros,
-        test_eliminar_pedido_con_cobros,
-    ]
-
-    aprobados = 0
-    fallados = 0
-
-    print("\n=== TESTS DE pedidos.py ===\n")
-    for test in tests:
-        try:
-            test()
-            aprobados += 1
-        except AssertionError as e:
-            print(f"✗ {test.__name__}: {e}")
-            fallados += 1
-        except Exception as e:
-            print(f"✗ {test.__name__} — error inesperado: {e}")
-            fallados += 1
-
-    print(f"\n{aprobados} aprobados, {fallados} fallados de {len(tests)} tests")
-
-
-if __name__ == "__main__":
-    ejecutar_tests()

@@ -74,15 +74,27 @@ Aparece el menú principal:
 
 ## Cómo correr los tests
 
-Desde la carpeta `sistema_oli/`:
+Requiere tener `pytest` instalado:
 
 ```bash
-python3 tests/test_utils.py
-python3 tests/test_clientes.py
-python3 tests/test_pedidos.py
+pip install pytest
 ```
 
-Cada suite restaura los archivos `.json` al estado original al terminar, así que se pueden correr en cualquier orden sin afectar los datos.
+Desde la carpeta `sistema_oli/`, correr todos los tests juntos:
+
+```bash
+python3 -m pytest tests/ -v
+```
+
+O por archivo individual:
+
+```bash
+python3 -m pytest tests/test_utils.py -v
+python3 -m pytest tests/test_clientes.py -v
+python3 -m pytest tests/test_pedidos.py -v
+```
+
+Cada test guarda los datos reales antes de ejecutarse y los restaura al terminar (con `try/finally`), así que se pueden correr en cualquier orden sin afectar los datos del sistema.
 
 ---
 
@@ -257,4 +269,5 @@ No se requiere instalar nada. Todo es biblioteca estándar de Python 3:
 
 ## Requisitos
 
-- Python 3.x (no requiere instalar nada extra)
+- Python 3.x
+- `pytest` para correr los tests: `pip install pytest`
